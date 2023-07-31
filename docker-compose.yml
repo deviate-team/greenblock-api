@@ -8,8 +8,8 @@ services:
       - '5000:5000'
     env_file:
       - .env
-    depends_on:
-      - db
+    networks:
+      - gb-network
 
   db:
     container_name: gb-monogodb
@@ -24,3 +24,9 @@ services:
       - ./data:/data/db
     logging:
       driver: none
+    networks:
+      - gb-network
+
+networks:
+  gb-network:
+    driver: bridge
