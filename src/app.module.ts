@@ -8,7 +8,6 @@ import configuration from './config/configuration';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -20,11 +19,10 @@ import { UserModule } from './user/user.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('mongo.uri'),
+        uri: configService.get<string>('mongoUri'),
       }),
     }),
     AuthModule,
-    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
