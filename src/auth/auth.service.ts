@@ -25,6 +25,7 @@ export class AuthService {
     role: string;
   }): string {
     const payload = { sub: userId, role };
+
     return this.jwtService.sign(payload);
   }
 
