@@ -9,7 +9,8 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Accept, Authorization',
-    exposedHeaders: 'Authorization',
+    optionsSuccessStatus: 200,
+    exposedHeaders: 'Authorization', // Add this line to expose the Authorization header
   });
 
   const configService = app.get(ConfigService);

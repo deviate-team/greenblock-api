@@ -11,7 +11,7 @@ import { Ticket, TicketDocument } from './schemas/ticket.schema';
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
-  ) { }
+  ) {}
 
   async create(createTicketDto: CreateTicketDto) {
     return await this.ticketModel.create(createTicketDto);
