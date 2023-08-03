@@ -6,8 +6,12 @@ services:
     build: .
     ports:
       - '5000:5000'
-    env_file:
-      - .env
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://root:example@gb-monogodb:27017
+      - NODE_ENV=development
+      - JWT_SECRET=sosecret
+      - JWT_EXPIRES_IN=30d
     networks:
       - gb-network
 

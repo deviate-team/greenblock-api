@@ -11,5 +11,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Deploy to Self-Hosted
+        run: |
+          docker-compose up -d
