@@ -23,6 +23,6 @@ export class TicketService {
     }
 
     async delete(id : string) {
-        return await this.Delete(id).exec();
+        return await this.delete(id).exec();
     }
 }
