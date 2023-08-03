@@ -95,8 +95,6 @@ export class AuthService {
       password: await bcrypt.hashSync(password, salt),
     });
 
-    console.log(newUser);
-
     return await this.generateToken({
       userId: newUser._id,
       role: newUser.role,

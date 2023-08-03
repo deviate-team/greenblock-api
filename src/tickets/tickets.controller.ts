@@ -29,7 +29,7 @@ export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
   @Post()
-  @Roles(Role.Provider)
+  @Roles(Role.Provider, Role.Admin)
   @UseGuards(RolesGuard)
   async create(@Body() createTicketDto: CreateTicketDto) {
     const newTicket = await this.ticketsService.create(createTicketDto);
@@ -61,7 +61,7 @@ export class TicketsController {
   }
 
   @Post()
-  @Roles(Role.Provider)
+  @Roles(Role.Provider, Role.Admin)
   @UseGuards(RolesGuard)
   @Patch(':id')
   async update(
@@ -77,7 +77,7 @@ export class TicketsController {
   }
 
   @Post()
-  @Roles(Role.Provider)
+  @Roles(Role.Provider, Role.Admin)
   @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {

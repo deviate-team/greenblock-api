@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Roles(Role.Provider, Role.User)
+  @Roles(Role.Provider, Role.User, Role.Admin)
   @UseGuards(RolesGuard)
   @Get('/profile')
   async getProfile(@GetUser() currentUser) {
