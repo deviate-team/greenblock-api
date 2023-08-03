@@ -7,10 +7,10 @@ import configuration from './config/configuration';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { AuthModule } from './auth/auth.module';
-import { TicketModule } from './ticket/ticket.module';
-import { TicketController } from './ticket/ticket.controller';
-import { TicketService} from './ticket/ticket.service';
+import { TicketsModule } from './tickets/tickets.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,9 +25,9 @@ import { TicketService} from './ticket/ticket.service';
       }),
     }),
     AuthModule,
-    TicketModule,
+    TicketsModule,
   ],
-  controllers: [AppController,TicketController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
