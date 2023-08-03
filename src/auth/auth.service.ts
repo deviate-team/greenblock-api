@@ -1,5 +1,6 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { User, UserDocument } from '@/users/schemas/user.schema';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -36,6 +37,7 @@ export class AuthService {
     if (!userExists) {
       throw new HttpException(
         {
+          success: false,
           message: 'User not found',
         },
         404,
@@ -49,6 +51,7 @@ export class AuthService {
     if (!passwordMatch) {
       throw new HttpException(
         {
+          success: false,
           message: 'Invalid credentials',
         },
         401,
@@ -66,6 +69,7 @@ export class AuthService {
     if (password !== confirmPassword) {
       throw new HttpException(
         {
+          success: false,
           message: 'Passwords do not match',
         },
         400,
@@ -79,6 +83,7 @@ export class AuthService {
     if (userExists.length) {
       throw new HttpException(
         {
+          success: false,
           message: 'User already exists',
         },
         409,

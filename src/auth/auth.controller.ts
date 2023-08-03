@@ -13,7 +13,6 @@ export class AuthController {
   @Post('sign-in')
   async signIn(@Body() body: SignInDto, @Res() res: Response) {
     const token = await this.authService.signIn(body);
-    console.log(token);
     res.setHeader('Authorization', token);
 
     return res.status(200).json({
@@ -25,7 +24,6 @@ export class AuthController {
   @Post('sign-up')
   async signUp(@Body() body: SignUpDto, @Res() res: Response) {
     const token = await this.authService.signUp(body);
-    console.log(token);
     res.setHeader('Authorization', token);
 
     return res.status(201).json({

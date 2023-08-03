@@ -11,6 +11,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,12 +23,13 @@ import { TransactionModule } from './transaction/transaction.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+        uri: configService.get<string>('mongoUri'),
       }),
     }),
     AuthModule,
     TicketsModule,
     TransactionModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
