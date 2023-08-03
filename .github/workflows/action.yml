@@ -13,4 +13,4 @@ jobs:
       - uses: actions/checkout@v3
       - name: Deploy to Self-Hosted
         run: |
-          docker compose up -d
+          docker compose up -d --build --remove-orphans
