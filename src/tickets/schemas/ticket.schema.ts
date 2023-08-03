@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Document } from 'mongoose';
+import { HydratedDocument, Document, Types } from 'mongoose';
 
-import { IProvider } from '@/common/interfaces/provider.interface';
+import { User } from '@/users/schemas/user.schema';
 import { ILocation } from '@/common/interfaces/location.interface';
 
 export type TicketDocument = Ticket & HydratedDocument<Ticket>;
@@ -41,8 +41,11 @@ export class Ticket extends Document {
   @Prop({ required: true })
   business_price: number;
 
-  @Prop({ required: true, type: Object })
-  provider: IProvider;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+  provider: User;
+
+  @Prop({ required: true })
+  seat_limit: number;
 
   @Prop({ default: Date.now })
   createdAt: Date;

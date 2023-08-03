@@ -13,8 +13,11 @@ export class TicketsService {
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
   ) {}
 
-  async create(createTicketDto: CreateTicketDto) {
-    return await this.ticketModel.create(createTicketDto);
+  async create(createTicketDto: CreateTicketDto, user) {
+    return await this.ticketModel.create({
+      ...createTicketDto,
+      provider: user._id,
+    });
   }
 
   async findAll() {
@@ -36,7 +39,7 @@ export class TicketsService {
     return ticketExists;
   }
 
-  async update(id: string, updateTicketDto: UpdateTicketDto) {
+  async update(id: string, updateTicketDto: UpdateTicketDto, user) {
     const ticketExists = await this.ticketModel.findById(id).exec();
     if (!ticketExists) {
       return new HttpException(
@@ -45,6 +48,16 @@ export class TicketsService {
           message: 'Ticket not found',
         },
         404,
+      );
+    }
+
+    if (ticketExists.provider.toString() !== user._id.toString()) {
+      return new HttpException(
+        {
+          success: false,
+          message: 'You are not authorized to update this ticket',
+        },
+        401,
       );
     }
 

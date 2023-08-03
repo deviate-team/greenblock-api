@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
-// import { GetUser } from '@/common/decorators/get-user.decorator';
+import { GetUser } from '@/common/decorators/get-user.decorator';
 import { JwtGuard } from '@/common/guards/jwt.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Role } from '@/common/enums/role.enum';
@@ -31,8 +31,8 @@ export class TicketsController {
   @Post()
   @Roles(Role.Provider, Role.Admin)
   @UseGuards(RolesGuard)
-  async create(@Body() createTicketDto: CreateTicketDto) {
-    const newTicket = await this.ticketsService.create(createTicketDto);
+  async create(@Body() createTicketDto: CreateTicketDto, @GetUser() user) {
+    const newTicket = await this.ticketsService.create(createTicketDto, user);
     return {
       success: true,
       message: 'Ticket created successfully',
@@ -60,15 +60,15 @@ export class TicketsController {
     };
   }
 
-  @Post()
+  @Patch(':id')
   @Roles(Role.Provider, Role.Admin)
   @UseGuards(RolesGuard)
-  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateTicketDto: UpdateTicketDto,
+    @GetUser() user,
   ) {
-    const ticket = await this.ticketsService.update(id, updateTicketDto);
+    const ticket = await this.ticketsService.update(id, updateTicketDto, user);
     return {
       success: true,
       message: 'Ticket updated successfully',
@@ -76,7 +76,6 @@ export class TicketsController {
     };
   }
 
-  @Post()
   @Roles(Role.Provider, Role.Admin)
   @UseGuards(RolesGuard)
   @Delete(':id')

@@ -1,53 +1,90 @@
-import { IsOptional, IsString, IsDateString, IsNumber } from 'class-validator';
+import { IsString, IsDateString, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { ILocation } from '@/common/interfaces/location.interface';
-import { IProvider } from '@/common/interfaces/provider.interface';
+
 export class UpdateTicketDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Ticket title',
+    example: 'Updated ticket title',
+  })
   @IsOptional()
   @IsString()
   title?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Ticket description',
+    example: 'Updated ticket description',
+  })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Depart location',
+    example: {
+      lagitude: 10.123,
+      longitude: 10.123,
+    },
+  })
   @IsOptional()
   depart_location?: ILocation;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Arrive location',
+    example: {
+      lagitude: 10.123,
+      longitude: 10.123,
+    },
+  })
   @IsOptional()
   arrive_location?: ILocation;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Date',
+    example: '2021-01-01',
+  })
   @IsOptional()
   @IsDateString()
   date?: Date;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Depart time',
+    example: '2021-01-01',
+  })
   @IsOptional()
   @IsDateString()
   depart_time?: Date;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Arrive time',
+    example: '2021-01-01',
+  })
   @IsOptional()
   @IsDateString()
   arrive_time?: Date;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Standard price',
+    example: 100,
+  })
   @IsOptional()
   @IsNumber()
   standard_price?: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Business price',
+    example: 120,
+  })
   @IsOptional()
   @IsNumber()
   business_price?: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'The limit of seat',
+    example: 100,
+  })
   @IsOptional()
-  provider?: IProvider;
+  @IsNumber()
+  seat_limit?: number;
 }
