@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { UsersModule } from './users/users.module';
+import { OfferModule } from './offer/offer.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UsersModule } from './users/users.module';
     TicketsModule,
     TransactionModule,
     UsersModule,
+    OfferModule,
   ],
   controllers: [AppController],
   providers: [AppService],
