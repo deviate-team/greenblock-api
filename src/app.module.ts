@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 
 import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TicketsModule } from './tickets/tickets.module';
     }),
     AuthModule,
     TicketsModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

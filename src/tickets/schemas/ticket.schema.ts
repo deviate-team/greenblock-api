@@ -14,22 +14,26 @@ export class Ticket extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
-  depart_location: string; // TODO: change to location object with lat and long
-  // depart_location: ILocation;
+  @Prop({
+    required: true,
+    type: Object,
+  })
+  depart_location: ILocation;
 
-  @Prop({ required: true })
-  arrive_location: string; // TODO: change to location object with lat and long
-  // arrive_location: ILocation;
+  @Prop({
+    required: true,
+    type: Object,
+  })
+  arrive_location: ILocation;
 
   @Prop({ required: true })
   date: Date;
 
   @Prop({ required: true })
-  depart_time: string;
+  depart_time: Date;
 
   @Prop({ required: true })
-  arrive_time: string;
+  arrive_time: Date;
 
   @Prop({ required: true })
   standard_price: number;
@@ -37,7 +41,7 @@ export class Ticket extends Document {
   @Prop({ required: true })
   business_price: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Object })
   provider: IProvider;
 
   @Prop({ default: Date.now })
