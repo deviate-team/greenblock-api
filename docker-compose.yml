@@ -25,7 +25,7 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - ./data:/data/db
+      - ../../../../backup/mongodb-data:/data/db
     logging:
       driver: none
     networks:
