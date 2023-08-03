@@ -9,6 +9,7 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Accept, Authorization',
+    exposedHeaders: 'Authorization',
   });
 
   const configService = app.get(ConfigService);

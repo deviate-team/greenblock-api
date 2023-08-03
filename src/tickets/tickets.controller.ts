@@ -16,27 +16,55 @@ export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
   @Post()
-  create(@Body() createTicketDto: CreateTicketDto) {
-    return this.ticketsService.create(createTicketDto);
+  async create(@Body() createTicketDto: CreateTicketDto) {
+    const newTicket = await this.ticketsService.create(createTicketDto);
+    return {
+      success: true,
+      message: 'Ticket created successfully',
+      data: newTicket,
+    };
   }
 
   @Get()
-  findAll() {
-    return this.ticketsService.findAll();
+  async findAll() {
+    const tikets = await this.ticketsService.findAll();
+    return {
+      success: true,
+      message: 'Tickets retrieved successfully',
+      data: tikets,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ticketsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const ticket = await this.ticketsService.findOne(id);
+    return {
+      success: true,
+      message: 'Ticket retrieved successfully',
+      data: ticket,
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
-    return this.ticketsService.update(id, updateTicketDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateTicketDto: UpdateTicketDto,
+  ) {
+    const ticket = await this.ticketsService.update(id, updateTicketDto);
+    return {
+      success: true,
+      message: 'Ticket updated successfully',
+      data: ticket,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ticketsService.remove(id);
+  async remove(@Param('id') id: string) {
+    const ticketRemoved = await this.ticketsService.remove(id);
+    return {
+      success: true,
+      message: 'Ticket removed successfully',
+      data: ticketRemoved,
+    };
   }
 }

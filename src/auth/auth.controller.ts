@@ -17,6 +17,7 @@ export class AuthController {
     res.setHeader('Authorization', token);
 
     return res.status(200).json({
+      success: true,
       message: 'User logged in successfully',
     });
   }
@@ -28,6 +29,7 @@ export class AuthController {
     res.setHeader('Authorization', token);
 
     return res.status(201).json({
+      success: true,
       message: 'User registered successfully',
     });
   }
