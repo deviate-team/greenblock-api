@@ -1,45 +1,90 @@
 import { IsString, IsNotEmpty, IsDateString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { IProvider } from '@/common/interfaces/provider.interface';
 import { ILocation } from '@/common/interfaces/location.interface';
 export class CreateTicketDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Ticket title',
+    example: 'Ticket title',
+  })
+  @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Ticket description',
+    example: 'Ticket description',
+  })
+  @IsNotEmpty()
   @IsString()
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Depart location',
+    example: {
+      lagitude: 10.123,
+      longitude: 10.123,
+    },
+  })
+  @IsNotEmpty()
   depart_location: ILocation;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Arrive location',
+    example: {
+      lagitude: 10.123,
+      longitude: 10.123,
+    },
+  })
+  @IsNotEmpty()
   @IsString()
   arrive_location: ILocation;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Date',
+    example: '2021-01-01',
+  })
+  @IsNotEmpty()
   @IsDateString()
   date: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Depart time',
+    example: '2021-01-01',
+  })
+  @IsNotEmpty()
   @IsDateString()
   depart_time: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Arrive time',
+    example: '2021-01-01',
+  })
+  @IsNotEmpty()
   @IsDateString()
   arrive_time: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Standard price',
+    example: 100,
+  })
+  @IsNotEmpty()
   @IsNumber()
   standard_price: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Business price',
+    example: 120,
+  })
+  @IsNotEmpty()
   @IsNumber()
   business_price: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The limit of seat',
+    example: 100,
+  })
   @IsNotEmpty()
-  provider: IProvider;
+  @IsNumber()
+  seat_limit: number;
 }

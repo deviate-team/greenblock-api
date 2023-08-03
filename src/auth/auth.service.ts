@@ -84,7 +84,7 @@ export class AuthService {
       throw new HttpException(
         {
           success: false,
-          message: 'User already exists',
+          message: 'Username or email already exists',
         },
         409,
       );
