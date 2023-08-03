@@ -62,6 +62,7 @@ export class TicketsController {
 
   @Post()
   @Roles(Role.Provider)
+  @UseGuards(RolesGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -77,6 +78,7 @@ export class TicketsController {
 
   @Post()
   @Roles(Role.Provider)
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const ticketRemoved = await this.ticketsService.remove(id);

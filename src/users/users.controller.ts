@@ -14,9 +14,10 @@ import { UsersService } from './users.service';
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Roles(Role.Provider, Role.User)
+  @UseGuards(RolesGuard)
   @Get('/profile')
   async getProfile(@GetUser() currentUser) {
     const user = await this.usersService.findOneById(currentUser._id);
@@ -28,6 +29,7 @@ export class UsersController {
   }
 
   @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @Get()
   async findAll() {
     const users = await this.usersService.findAll();
@@ -39,6 +41,7 @@ export class UsersController {
   }
 
   @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @Get(':id')
   async findOne(id: string) {
     const user = await this.usersService.findOneById(id);
@@ -51,6 +54,7 @@ export class UsersController {
 
   // Find by username
   @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @Get('/username/:username')
   async findOneByUsername(username: string) {
     const user = await this.usersService.findOneByUsername(username);
@@ -63,6 +67,7 @@ export class UsersController {
 
   // Find by email
   @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @Get('/email/:email')
   async findOneByEmail(email: string) {
     const user = await this.usersService.findOneByEmail(email);
