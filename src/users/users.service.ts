@@ -47,7 +47,7 @@ export class UsersService {
     return userExists;
   }
 
-  async findOneByUserName(username: string): Promise<UserDocument> {
+  async findOneByUsername(username: string): Promise<UserDocument> {
     const userExists = await this.userModel
       .findOne({ username })
       .select('-__v -password')
