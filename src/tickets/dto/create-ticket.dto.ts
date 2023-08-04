@@ -22,7 +22,7 @@ export class CreateTicketDto {
   @ApiProperty({
     description: 'Depart location',
     example: {
-      lagitude: 10.123,
+      latitude: 10.123,
       longitude: 10.123,
     },
   })
@@ -32,7 +32,7 @@ export class CreateTicketDto {
   @ApiProperty({
     description: 'Arrive location',
     example: {
-      lagitude: 10.123,
+      latitude: 10.123,
       longitude: 10.123,
     },
   })
