@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
 import { OfferDocument } from './schemas/offer.schema';
-import {InjectModel} from '@nestjs/mongoose';
-import {Model} from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { Offer } from './entities/offer.entity';
 import { BuyCarbonDto } from './dto/buy-carbon.dto';
 import { Project, ProjectDocument } from '@/projects/schemas/project.schema';
@@ -15,11 +15,8 @@ export class OffersService {
   private readonly projectsService: ProjectsService;
 
   constructor(
-    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>,
-    //@InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
-    
+    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>, //@InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
   ) {}
-
 
   async create(createOfferDto: CreateOfferDto, user) {
     return await this.offerModel.create({
@@ -31,9 +28,8 @@ export class OffersService {
   async findAll() {
     return await this.offerModel.find({});
   }
-  
 
-  async buyCarbon(buyCarbonDto:BuyCarbonDto, user) {
+  async buyCarbon(buyCarbonDto: BuyCarbonDto, user) {
     const offer = await this.offerModel.findById(buyCarbonDto.id);
     if (offer.available < buyCarbonDto.amount) {
       throw new Error('Not enough carbon available');
@@ -46,8 +42,6 @@ export class OffersService {
     //   ...buyCarbonDto,
     //   owner: user._id,
     // });
-
-
   }
 
   async findOne(id: string) {

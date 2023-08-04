@@ -40,7 +40,6 @@ export class CreateOfferDto {
   @IsPositive()
   price_per_kg: number;
 
-
   @ApiProperty({
     description: 'Offer image',
     example: 'img_path',
