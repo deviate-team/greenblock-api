@@ -1,45 +1,48 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
+import { GetUser } from '@/common/decorators/get-user.decorator';
+import { JwtGuard } from '@/common/guards/jwt.guard';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/common/decorators/roles.decorator';
+
+import { TransactionsService } from './transactions.service';
 @Controller('transactions')
+@UseGuards(JwtGuard)
+@ApiBearerAuth()
+@ApiTags('Transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
-  }
-
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
+  async findAll() {
+    const transactions = await this.transactionsService.findAll();
+    return {
+      success: true,
+      message: 'Transactions fetched successfully',
+      data: transactions,
+    };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
+  @Get('/list')
+  async findAllWithPagination(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+    @GetUser() user,
   ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
-  }
+    const transactions = await this.transactionsService.findAllWithPagination(
+      page,
+      limit,
+      user,
+    );
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+    return {
+      success: true,
+      message: 'Transactions fetched successfully',
+      data: transactions,
+    };
   }
 }

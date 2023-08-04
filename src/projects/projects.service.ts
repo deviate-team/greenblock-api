@@ -27,14 +27,20 @@ export class ProjectsService {
   async buy(buyProjectDto: BuyProjectDto, user) {
     const project = await this.projectModel.findById(buyProjectDto.id).exec();
     if (!project) {
+    if (!project) {
       throw new Error('project not found');
     }
+    const maximum: number = project.maximum;
     const maximum: number = project.maximum;
 
     if (project.amount + buyProjectDto.amount > maximum) {
       throw new Error('maximum amount exceeded');
     }
 
+    const isIDinMember = await this.projectModel
+      .findOne({ _id: project.id, 'member.user': user._id })
+      .exec();
+    if (isIDinMember == null) {
     const isIDinMember = await this.projectModel
       .findOne({ _id: project.id, 'member.user': user._id })
       .exec();
@@ -54,11 +60,31 @@ export class ProjectsService {
         },
       );
     } else {
+      const updateMember = await this.projectModel.findOneAndUpdate(
+        { _id: project.id },
+        {
+          $push: {
+            member: {
+              user: user._id,
+              amount: buyProjectDto.amount,
+              lastbuy: now.toLocaleDateString(),
+              percentage: 0,
+            },
+          },
+        },
+      );
+    } else {
       const now = new Date();
       const currentAmount = project.member.find((m) =>
         m.user.equals(user._id),
       ).amount;
+      const currentAmount = project.member.find((m) =>
+        m.user.equals(user._id),
+      ).amount;
 
+      const updatedAmount = currentAmount + buyProjectDto.amount;
+      const updatedLastBuy = now.toLocaleDateString(); // Set the new value for lastbuy here
+      const updatedPercentage = (updatedAmount / maximum) * 100; // Set the new value for percentage here
       const updatedAmount = currentAmount + buyProjectDto.amount;
       const updatedLastBuy = now.toLocaleDateString(); // Set the new value for lastbuy here
       const updatedPercentage = (updatedAmount / maximum) * 100; // Set the new value for percentage here
@@ -80,7 +106,9 @@ export class ProjectsService {
 
   async findOne(id: string) {
     const projectExits = await this.projectModel.findById(id).exec();
+    const projectExits = await this.projectModel.findById(id).exec();
     if (projectExits) {
+      return projectExits;
       return projectExits;
     }
   }

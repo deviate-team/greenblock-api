@@ -63,17 +63,17 @@ export class ProjectsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const project =  await this.projectsService.findOne(id);
+    const project = await this.projectsService.findOne(id);
     console.log(project);
-    if(project == undefined){
+    if (project == undefined) {
       throw new Error('project not found');
-    }else{
+    } else {
       return {
         success: true,
         message: 'Projects retrieved successfully',
         data: project,
       };
-  }
+    }
   }
 
   @Patch(':id')
@@ -86,7 +86,7 @@ export class ProjectsController {
   @Roles(Role.Provider, Role.Admin)
   async remove(@Param('id') id: string) {
     console.log(id);
-    const projectRemoved =  await this.projectsService.remove(id);
+    const projectRemoved = await this.projectsService.remove(id);
     return {
       success: true,
       message: 'Ticket removed successfully',
