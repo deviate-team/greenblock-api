@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
-import { Offer ,OfferDocument} from './schemas/offer.schema';
+import { Offer, OfferDocument } from './schemas/offer.schema';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 
 @Injectable()
 export class OfferService {
