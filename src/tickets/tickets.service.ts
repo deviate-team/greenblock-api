@@ -6,11 +6,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Ticket, TicketDocument } from './schemas/ticket.schema';
+import { BookingTicketDto } from './dto/booking-ticket.dto';
+import { TransactionsService } from '@/transactions/transactions.service';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
+    private readonly transactionService: TransactionsService,
   ) {}
 
   async create(createTicketDto: CreateTicketDto, user) {
@@ -97,8 +100,9 @@ export class TicketsService {
     };
   }
 
-  async book(id: string, user) {
+  async book(id: string, bookingDto: BookingTicketDto, user) {
     const ticketExists = await this.ticketModel.findById(id).exec();
+    const { quantity, option } = bookingDto;
 
     if (!ticketExists) {
       return new HttpException(
@@ -120,21 +124,27 @@ export class TicketsService {
       );
     }
 
-    if (ticketExists.seat_booked.includes(user._id)) {
+    if (quantity > ticketExists.seat_limit - ticketExists.seat_booked.length) {
       return new HttpException(
         {
           success: false,
-          message: 'You already booked this ticket',
+          message: 'Not enough tickets',
         },
         400,
       );
     }
 
+    // TODO: Check if user no enough balance
+
     const updatedTicket = await this.ticketModel
       .findByIdAndUpdate(
         id,
         {
-          $push: { seat_booked: user._id },
+          $push: {
+            seat_booked: {
+              $each: Array(quantity).fill(user._id),
+            },
+          },
         },
         { new: true },
       )
@@ -144,6 +154,34 @@ export class TicketsService {
       )
       .select('-__v')
       .exec();
+
+    // transaction of buyed ticket
+    await this.transactionService.create({
+      type: 'ticket',
+      user: user._id,
+      ticket: id,
+      quantity,
+      description: `Booked ${quantity} ticket(s)`,
+      status: 'success',
+      total_price:
+        option === 'standard'
+          ? ticketExists.standard_price * quantity
+          : ticketExists.business_price * quantity,
+    });
+
+    // transaction of provider
+    await this.transactionService.create({
+      type: 'ticket',
+      user: updatedTicket.provider,
+      ticket: id,
+      quantity,
+      description: `Sold ${quantity} ticket(s)`,
+      status: 'success',
+      total_price:
+        option === 'standard'
+          ? ticketExists.standard_price * quantity
+          : ticketExists.business_price * quantity,
+    });
 
     return {
       ...updatedTicket.toJSON(),

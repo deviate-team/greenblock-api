@@ -13,6 +13,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { UsersModule } from './users/users.module';
 import { OffersModule } from './offers/offers.module';
 import { ProjectsModule } from './projects/projects.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProjectsModule } from './projects/projects.module';
       }),
     }),
     AuthModule,
+    TransactionsModule,
     TicketsModule,
     UsersModule,
     OffersModule,

@@ -21,6 +21,7 @@ import { TicketsService } from './tickets.service';
 
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { BookingTicketDto } from './dto/booking-ticket.dto';
 
 @ApiTags('Tickets')
 @ApiBearerAuth()
@@ -41,8 +42,12 @@ export class TicketsController {
 
   @Post(':id/book')
   @UseGuards(JwtGuard)
-  async book(@Param('id') id: string, @GetUser() user) {
-    const ticket = await this.ticketsService.book(id, user);
+  async book(
+    @Param('id') id: string,
+    @Body() bookingDto: BookingTicketDto,
+    @GetUser() user,
+  ) {
+    const ticket = await this.ticketsService.book(id, bookingDto, user);
     return {
       success: true,
       message: 'Ticket booked successfully',
@@ -103,10 +108,12 @@ export class TicketsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   async remove(@Param('id') id: string) {
-    await this.ticketsService.remove(id);
+    const ticketRemoved = await this.ticketsService.remove(id);
+
     return {
       success: true,
-      message: 'Ticket removed successfully',
+      message: 'Ticket deleted successfully',
+      data: ticketRemoved,
     };
   }
 }

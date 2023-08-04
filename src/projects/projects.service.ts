@@ -26,7 +26,7 @@ export class ProjectsService {
 
   async buy(buyProjectDto: BuyProjectDto, user) {
     const project = await this.projectModel.findById(buyProjectDto.id).exec();
-    if(!project){
+    if (!project) {
       throw new Error('project not found');
     }
     const maximum = project.maximum;
@@ -35,22 +35,20 @@ export class ProjectsService {
       throw new Error('maximum amount exceeded');
     } else {
       const customer = await project.member.find((member) => {
-        if(member.user == user._id){
+        if (member.user == user._id) {
           return member;
         }
       });
-      
-      if (customer) {
 
-      
+      if (customer) {
         const update = await customer.findOneAndUpdate(
           { user: user._id },
-          { amount: customer.amount + buyProjectDto.amount });
+          { amount: customer.amount + buyProjectDto.amount },
+        );
         console.log(update);
         // customer.amount += buyProjectDto.amount;
         // customer.percentage = (customer.amount / maximum)*100;
         // customer.lastbuy = Date.now() as unknown as Date;
-
       } else {
         project.member.push({
           user: user._id,
@@ -58,29 +56,23 @@ export class ProjectsService {
           lastbuy: Date.now() as unknown as Date,
           percentage: 0,
         } as Imember);
-        
-      project.amount += buyProjectDto.amount;
-      //project.save();
-      //this.projectModel.findByIdAndUpdate(project._id,project).exec();
-    }
 
+        project.amount += buyProjectDto.amount;
+        //project.save();
+        //this.projectModel.findByIdAndUpdate(project._id,project).exec();
+      }
 
       project.member.push(user._id);
       await project.save();
     }
   }
 
-  async findMember(id: string) {
-
-  }
-
+  async findMember(id: string) {}
 
   async findOne(id: string) {
-    const projectExits = await this.projectModel
-      .findById(id)
-      .exec();
+    const projectExits = await this.projectModel.findById(id).exec();
     if (projectExits) {
-      return projectExits
+      return projectExits;
     }
   }
 
@@ -89,7 +81,6 @@ export class ProjectsService {
   }
 
   async remove(id: string) {
-
     //todo
     return await this.projectModel.findByIdAndDelete(id).exec();
   }
