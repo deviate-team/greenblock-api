@@ -71,18 +71,40 @@ export class ProjectsService {
     }
 
     // if user is not in member, add user to member also if user is in member, update the amount
-    const userExists = projectExists.shares_holders.find(
-      (member) => member.user == user._id,
-    );
-
-    if (userExists) {
-      const index = projectExists.shares_holders.findIndex(
-        (member) => member.user == user._id,
+    const finduser = await this.projectModel.findOne({
+      _id: id,
+      'shares_holders.user': user._id,
+    });
+    if (finduser != undefined) {
+      const findandUpdate = await this.projectModel.findOneAndUpdate(
+        {
+          _id: id,
+          'shares_holders.user': user._id,
+        },
+        {
+          $inc: {
+            'shares_holders.$.shares': amount,
+          },
+        },
+        {
+          new: true,
+        },
       );
-      projectExists.shares_holders[index].shares += amount;
-      projectExists.shares_holders[index].percentage =
-        (projectExists.shares_holders[index].shares / maximum_shares) * 100;
-      projectExists.shares_holders[index].last_payment = new Date();
+      const findandUpdate2 = await this.projectModel.findOneAndUpdate(
+        {
+          _id: id,
+          'shares_holders.user': user._id,
+        },
+        {
+          $set: {
+            'shares_holders.$.percentage': (amount / maximum_shares) * 100,
+            'shares_holders.$.last_paymet': new Date() ,
+          },
+        },
+        {
+          new: true,
+        },
+      );
     } else {
       projectExists.shares_holders.push({
         user: user._id,
@@ -91,7 +113,7 @@ export class ProjectsService {
         last_payment: new Date(),
       });
     }
-
+    projectExists.isNew = false;
     projectExists.balance += amount;
     currentUser.money -= amount;
     await currentUser.save();
