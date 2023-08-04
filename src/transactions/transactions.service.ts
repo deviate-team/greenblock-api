@@ -1,26 +1,62 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Transaction, TransactionDocument } from './schemas/transaction.schema';
+import { CreateTransactionDTO } from './dto/create-transactions.dto';
 @Injectable()
 export class TransactionsService {
-  create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
+  constructor(
+    @InjectModel(Transaction.name)
+    private transactionModel: Model<TransactionDocument>,
+  ) {}
+
+  async create(createTransactionDto: CreateTransactionDTO) {
+    await this.transactionModel.create(createTransactionDto);
   }
 
-  findAll() {
-    return `This action returns all transactions`;
+  async findAll() {
+    const transactions = await this.transactionModel
+      .find()
+      .populate(
+        'user',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+      )
+      .select('-__v')
+      .sort({ createdAt: -1 })
+      .exec();
+
+    return transactions;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} transaction`;
-  }
+  async findAllWithPagination(page = '1', limit = '10', user) {
+    const parsedPage = Math.max(Number(page), 1);
+    const parsedLimit = Number(limit);
 
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
-  }
+    const count = await this.transactionModel.countDocuments().exec();
+    const transactions = await this.transactionModel
+      .find({
+        user: user._id,
+      })
+      .limit(parsedLimit)
+      .skip((parsedPage - 1) * parsedLimit)
+      .populate(
+        'user',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+      )
+      .populate(
+        'ticket',
+        '-__v -createdAt -updatedAt -seat_booked -seat_limit -provider',
+      )
+      .select('-__v')
+      .sort({ createdAt: -1 })
+      .exec();
 
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+    return {
+      totalTransactions: count,
+      currentPage: parsedPage,
+      totalPages: Math.ceil(count / parsedLimit),
+      transactions,
+    };
   }
 }

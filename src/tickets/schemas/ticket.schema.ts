@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Document, Types } from 'mongoose';
 
-import { User } from '@/users/schemas/user.schema';
 import { ILocation } from '@/common/interfaces/location.interface';
 
 export type TicketDocument = Ticket & HydratedDocument<Ticket>;
@@ -42,7 +41,7 @@ export class Ticket extends Document {
   business_price: number;
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-  provider: User;
+  provider: string;
 
   @Prop({ required: true })
   seat_limit: number;
