@@ -11,8 +11,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { UsersModule } from './users/users.module';
-import { TransactionsModule } from './transactions/transactions.module';
-import { OfferModule } from './offer/offer.module';
+import { OffsetModule } from './offets/offset.module';
 
 @Module({
   imports: [
@@ -30,8 +29,7 @@ import { OfferModule } from './offer/offer.module';
     AuthModule,
     TicketsModule,
     UsersModule,
-    TransactionsModule,
-    OfferModule,
+    OffsetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

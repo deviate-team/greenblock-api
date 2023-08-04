@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
@@ -36,6 +37,19 @@ export class TicketsController {
       success: true,
       message: 'Ticket created successfully',
       data: newTicket,
+    };
+  }
+
+  @Get('/list')
+  async findAllWithPagination(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    const tikets = await this.ticketsService.findAllWithPagination(page, limit);
+    return {
+      success: true,
+      message: 'Tickets retrieved successfully',
+      data: tikets,
     };
   }
 

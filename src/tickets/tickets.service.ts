@@ -24,6 +24,25 @@ export class TicketsService {
     return await this.ticketModel.find().exec();
   }
 
+  async findAllWithPagination(page = '1', limit = '10') {
+    const parsedPage = Math.max(Number(page), 1);
+    const parsedLimit = Number(limit);
+
+    const count = await this.ticketModel.countDocuments().exec();
+    const tickets = await this.ticketModel
+      .find()
+      .limit(parsedLimit)
+      .skip((parsedPage - 1) * parsedLimit)
+      .exec();
+
+    return {
+      totalTickets: count,
+      currentPage: parsedPage,
+      totalPages: Math.ceil(count / parsedLimit),
+      tickets,
+    };
+  }
+
   async findOne(id: string) {
     const ticketExists = await this.ticketModel.findById(id).exec();
     if (!ticketExists) {
