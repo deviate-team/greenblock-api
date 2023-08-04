@@ -14,7 +14,7 @@ export class Offer extends Document {
   description: string;
 
   @Prop({ required: true })
-  project: string;
+  project_id: string;
 
   @Prop({ required: false, type: Types.ObjectId, ref: 'User' })
   owner: User;
@@ -23,7 +23,7 @@ export class Offer extends Document {
   price_per_kg: number;
 
   @Prop({ required: true })
-  image: string;
+  image_path: string;
 
   @Prop({ default: 420 })
   available: number;
