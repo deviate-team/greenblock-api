@@ -17,6 +17,7 @@ import { Role } from '@/common/enums/role.enum';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
+import { BuyProjectDto } from './dto/buy-project.dto';
 @ApiTags('Projects')
 @ApiBearerAuth()
 @Controller('projects')
@@ -27,14 +28,22 @@ export class ProjectsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   async create(@Body() createProjectDto: CreateProjectDto, @GetUser() user) {
-    console.log(user);
-    const newProject = await this.projectsService.create(
-      createProjectDto,
-      user,
-    );
+    const newProject = await this.projectsService.create(createProjectDto, user);
     return {
       success: true,
       message: 'Project created successfully',
+      data: newProject,
+    };
+  }
+
+  @Post()
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Provider, Role.Admin)
+  async Buy(@GetUser() user,@Body() buyProjectDto: BuyProjectDto) {
+    const newProject = await this.projectsService.buy(buyProjectDto, user);
+    return {
+      success: true,
+      message: 'Buy Project successfully',
       data: newProject,
     };
   }

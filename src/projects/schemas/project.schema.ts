@@ -4,6 +4,7 @@ import { HydratedDocument, Document, Types } from 'mongoose';
 import { User } from '@/users/schemas/user.schema';
 import { IContract } from '@/common/interfaces/contract.interface';
 import { ITimePeriod } from '@/common/interfaces/timePeroid.interface';
+import { Imember } from '@/common/interfaces/member.interface';
 export type ProjectDocument = Project & HydratedDocument<Project>;
 
 @Schema()
@@ -32,11 +33,18 @@ export class Project extends Document {
   @Prop({ required: true })
   maximum: number;
 
+  @Prop({ default: 0 })
+  amount: number;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 
   @Prop({ default: Date.now })
   updatedAt: Date;
+
+  @Prop({ default:null})
+  member : [Imember];
+  
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
