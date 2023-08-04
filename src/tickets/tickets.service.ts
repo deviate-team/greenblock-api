@@ -8,13 +8,15 @@ import { Model } from 'mongoose';
 import { Ticket, TicketDocument } from './schemas/ticket.schema';
 import { BookingTicketDto } from './dto/booking-ticket.dto';
 import { TransactionsService } from '@/transactions/transactions.service';
+import { User, UserDocument } from '@/users/schemas/user.schema';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly transactionService: TransactionsService,
-  ) {}
+  ) { }
 
   async create(createTicketDto: CreateTicketDto, user) {
     await this.ticketModel.create({
@@ -83,7 +85,7 @@ export class TicketsService {
       .select('-__v')
       .exec();
     if (!ticketExists) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'Ticket not found',
@@ -119,6 +121,22 @@ export class TicketsService {
         {
           success: false,
           message: 'Ticket is full',
+        },
+        400,
+      );
+    }
+
+    const userExists = await this.userModel.findById(user._id).exec();
+    const ticketPrice =
+      option === 'standard'
+        ? ticketExists.standard_price
+        : ticketExists.business_price;
+
+    if (userExists.money < ticketPrice * quantity) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Not enough balance',
         },
         400,
       );
@@ -163,9 +181,7 @@ export class TicketsService {
       description: `Booked ${quantity} ticket(s)`,
       status: 'success',
       total_price:
-        option === 'standard'
-          ? ticketExists.standard_price * quantity
-          : ticketExists.business_price * quantity,
+        option === 'standard' ? ticketPrice * quantity : ticketPrice * quantity,
     });
 
     // transaction of provider
