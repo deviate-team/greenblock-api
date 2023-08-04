@@ -4,7 +4,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project, ProjectDocument } from './schemas/project.schema';
 import { Model } from 'mongoose';
 import { BuyProjectDto } from './dto/buy-project.dto';
-import {InjectModel} from "@nestjs/mongoose";
+import { InjectModel } from '@nestjs/mongoose';
 import { Imember } from '@/common/interfaces/member.interface';
 import { HttpException } from '@nestjs/common';
 @Injectable()
@@ -24,8 +24,7 @@ export class ProjectsService {
     return await this.projectModel.find().exec();
   }
 
-
-  async buy(buyProjectDto:BuyProjectDto,user) {
+  async buy(buyProjectDto: BuyProjectDto, user) {
     const project = await this.projectModel.findById(buyProjectDto.id).exec();
     if(!project){
       throw new Error('project not found');
@@ -34,7 +33,7 @@ export class ProjectsService {
 
     if (project.amount + buyProjectDto.amount > maximum) {
       throw new Error('maximum amount exceeded');
-    }else{
+    } else {
       const customer = await project.member.find((member) => {
         if(member.user == user._id){
           return member;
@@ -66,9 +65,9 @@ export class ProjectsService {
     }
 
 
-    project.member.push(user._id);
-    await project.save();
-  }
+      project.member.push(user._id);
+      await project.save();
+    }
   }
 
   async findMember(id: string) {

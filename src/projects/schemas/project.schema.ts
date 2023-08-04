@@ -42,9 +42,8 @@ export class Project extends Document {
   @Prop({ default: Date.now })
   updatedAt: Date;
 
-  @Prop({ default:null})
-  member : [Imember];
-  
+  @Prop({ default: null })
+  member: [Imember];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

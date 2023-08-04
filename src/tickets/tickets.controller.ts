@@ -32,11 +32,21 @@ export class TicketsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   async create(@Body() createTicketDto: CreateTicketDto, @GetUser() user) {
-    const newTicket = await this.ticketsService.create(createTicketDto, user);
+    await this.ticketsService.create(createTicketDto, user);
     return {
       success: true,
       message: 'Ticket created successfully',
-      data: newTicket,
+    };
+  }
+
+  @Post(':id/book')
+  @UseGuards(JwtGuard)
+  async book(@Param('id') id: string, @GetUser() user) {
+    const ticket = await this.ticketsService.book(id, user);
+    return {
+      success: true,
+      message: 'Ticket booked successfully',
+      data: ticket,
     };
   }
 
@@ -93,11 +103,10 @@ export class TicketsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   async remove(@Param('id') id: string) {
-    const ticketRemoved = await this.ticketsService.remove(id);
+    await this.ticketsService.remove(id);
     return {
       success: true,
       message: 'Ticket removed successfully',
-      data: ticketRemoved,
     };
   }
 }
