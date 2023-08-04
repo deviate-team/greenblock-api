@@ -10,7 +10,7 @@ import { JoinProjectDto } from './dto/join-project.dto';
 export class ProjectsService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
-  ) { }
+  ) {}
 
   async create(createProjectDto: CreateProjectDto, user) {
     return await this.projectModel.create({
