@@ -45,7 +45,7 @@ export class CreateOfferDto {
     example: 'img_path',
   })
   @IsUrl()
-  image: string;
+  image_path: string;
 
   @ApiProperty({
     description: 'how much this offer cab sell',

@@ -49,8 +49,12 @@ export class User extends Document {
   @Prop({ default: 25 })
   retailCC: number;
 
+  @Prop({ default: 25 })
+  carbonCredit: number;
+
   @Prop({ default: Date.now })
   createdAt: Date;
+  
 
   @Prop({ default: Date.now })
   updatedAt: Date;
