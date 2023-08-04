@@ -29,41 +29,52 @@ export class ProjectsService {
     if (!project) {
       throw new Error('project not found');
     }
-    const maximum = project.maximum;
+    const maximum: number = project.maximum;
 
     if (project.amount + buyProjectDto.amount > maximum) {
       throw new Error('maximum amount exceeded');
+    }
+
+    const isIDinMember = await this.projectModel
+      .findOne({ _id: project.id, 'member.user': user._id })
+      .exec();
+    if (isIDinMember == null) {
+      const now = new Date();
+      const updateMember = await this.projectModel.findOneAndUpdate(
+        { _id: project.id },
+        {
+          $push: {
+            member: {
+              user: user._id,
+              amount: buyProjectDto.amount,
+              lastbuy: now.toLocaleDateString(),
+              percentage: 0,
+            },
+          },
+        },
+      );
     } else {
-      const customer = await project.member.find((member) => {
-        if (member.user == user._id) {
-          return member;
-        }
-      });
+      const now = new Date();
+      const currentAmount = project.member.find((m) =>
+        m.user.equals(user._id),
+      ).amount;
 
-      if (customer) {
-        const update = await customer.findOneAndUpdate(
-          { user: user._id },
-          { amount: customer.amount + buyProjectDto.amount },
-        );
-        console.log(update);
-        // customer.amount += buyProjectDto.amount;
-        // customer.percentage = (customer.amount / maximum)*100;
-        // customer.lastbuy = Date.now() as unknown as Date;
-      } else {
-        project.member.push({
-          user: user._id,
-          amount: buyProjectDto.amount,
-          lastbuy: Date.now() as unknown as Date,
-          percentage: 0,
-        } as Imember);
+      const updatedAmount = currentAmount + buyProjectDto.amount;
+      const updatedLastBuy = now.toLocaleDateString(); // Set the new value for lastbuy here
+      const updatedPercentage = (updatedAmount / maximum) * 100; // Set the new value for percentage here
 
-        project.amount += buyProjectDto.amount;
-        //project.save();
-        //this.projectModel.findByIdAndUpdate(project._id,project).exec();
-      }
-
-      project.member.push(user._id);
-      await project.save();
+      const updateMember = await this.projectModel.findOneAndUpdate(
+        { _id: project.id, 'member.user': user._id },
+        {
+          $set: {
+            'member.$.amount': updatedAmount,
+            'member.$.lastbuy': updatedLastBuy,
+            'member.$.percentage': updatedPercentage,
+          },
+        },
+        { new: true },
+      );
+      console.log(updateMember);
     }
   }
 
