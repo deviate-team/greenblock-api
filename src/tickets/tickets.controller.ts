@@ -23,14 +23,13 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 
 @ApiTags('Tickets')
 @ApiBearerAuth()
-@UseGuards(JwtGuard)
 @Controller('tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
   @Post()
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
-  @UseGuards(RolesGuard)
   async create(@Body() createTicketDto: CreateTicketDto, @GetUser() user) {
     const newTicket = await this.ticketsService.create(createTicketDto, user);
     return {
@@ -61,8 +60,8 @@ export class TicketsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
-  @UseGuards(RolesGuard)
   async update(
     @Param('id') id: string,
     @Body() updateTicketDto: UpdateTicketDto,
@@ -76,9 +75,9 @@ export class TicketsController {
     };
   }
 
-  @Roles(Role.Provider, Role.Admin)
-  @UseGuards(RolesGuard)
   @Delete(':id')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Provider, Role.Admin)
   async remove(@Param('id') id: string) {
     const ticketRemoved = await this.ticketsService.remove(id);
     return {

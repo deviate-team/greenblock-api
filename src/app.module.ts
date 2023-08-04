@@ -10,7 +10,6 @@ import { AppService } from './app.service';
 
 import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
-import { TransactionModule } from './transaction/transaction.module';
 import { UsersModule } from './users/users.module';
 import { OffsetModule } from './offets/offset.module';
 
@@ -29,7 +28,6 @@ import { OffsetModule } from './offets/offset.module';
     }),
     AuthModule,
     TicketsModule,
-    TransactionModule,
     UsersModule,
     OffsetModule,
   ],

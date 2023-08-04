@@ -18,9 +18,6 @@ export interface Contract {
 @Schema()
 export class Offset extends Document {
     @Prop({ required: true })
-    type: string;
-
-    @Prop({ required: true })
     project_name:string;
 
     @Prop({ required: true })
