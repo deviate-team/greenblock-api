@@ -100,7 +100,10 @@ export class ProjectsService {
   }
 
   async findOne(id: string) {
-    const projectExists = await this.projectModel.findById(id).exec();
+    const projectExists = await this.projectModel
+      .findById(id)
+      .select('-__v')
+      .exec();
     if (!projectExists) {
       throw new HttpException(
         {
