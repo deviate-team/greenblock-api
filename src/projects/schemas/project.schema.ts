@@ -24,7 +24,7 @@ export class Project extends Document {
   @Prop({ required: true })
   price_by_unit: number;
 
-  @Prop({ required: true , type: Types.ObjectId})
+  @Prop({ required: true, type: Types.ObjectId })
   time_period: ITimePeriod;
 
   @Prop({ required: true })

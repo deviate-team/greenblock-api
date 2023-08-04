@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsDate, IsNumber, IsObject, IsUrl, IsPositive, isNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsNumber,
+  IsObject,
+  IsUrl,
+  IsPositive,
+  isNotEmpty,
+} from 'class-validator';
 import { IContract } from '@/common/interfaces/contract.interface';
 import { ITimePeriod } from '@/common/interfaces/timePeroid.interface';
 
@@ -22,7 +30,6 @@ export class CreateProjectDto {
     description: 'Project date',
     example: 'วันที่เริ่ม',
   })
-
   @ApiProperty({
     description: 'Project date',
     example: 'วันที่เริ่ม',
@@ -41,8 +48,8 @@ export class CreateProjectDto {
   @ApiProperty({
     description: 'Project time_peroid',
     example: {
-        start: '2021-01-01',
-        end: '2022-01-01',
+      start: '2021-01-01',
+      end: '2022-01-01',
     },
     type: Object,
   })

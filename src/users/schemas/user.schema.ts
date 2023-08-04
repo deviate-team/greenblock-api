@@ -24,8 +24,21 @@ export class User extends Document {
   @Prop({ required: true })
   password: string;
 
-  @Prop()
+  @Prop({
+    required: true,
+  })
   birthDate: Date;
+
+  @Prop({
+    required: true,
+  })
+  phoneNumber: string;
+
+  @Prop({
+    default:
+      'https://static.vecteezy.com/system/resources/previews/000/511/437/original/travel-tourism-logo-isolated-on-white-background-vector.jpg', // TODO: change default image
+  })
+  imageProfile: string;
 
   @Prop({ required: true, enum: Role, default: Role.User })
   role: string;
