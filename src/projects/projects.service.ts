@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BuyProjectDto } from './dto/buy-project.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Imember } from '@/common/interfaces/member.interface';
+import { HttpException } from '@nestjs/common';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -25,47 +26,71 @@ export class ProjectsService {
 
   async buy(buyProjectDto: BuyProjectDto, user) {
     const project = await this.projectModel.findById(buyProjectDto.id).exec();
-
+    if(!project){
+      throw new Error('project not found');
+    }
     const maximum = project.maximum;
 
-    if (project.amount + buyProjectDto.amount > project.maximum) {
+    if (project.amount + buyProjectDto.amount > maximum) {
       throw new Error('maximum amount exceeded');
     } else {
       const customer = await project.member.find((member) => {
-        return member.user == user._id;
+        if(member.user == user._id){
+          return member;
+        }
       });
+      
       if (customer) {
-        customer.amount += buyProjectDto.amount;
+
+      
+        const update = await customer.findOneAndUpdate(
+          { user: user._id },
+          { amount: customer.amount + buyProjectDto.amount });
+        console.log(update);
+        // customer.amount += buyProjectDto.amount;
+        // customer.percentage = (customer.amount / maximum)*100;
+        // customer.lastbuy = Date.now() as unknown as Date;
+
       } else {
-        let to_add: Imember = {
+        project.member.push({
           user: user._id,
           amount: buyProjectDto.amount,
           lastbuy: Date.now() as unknown as Date,
           percentage: 0,
-        };
-        // project.member.push({
+        } as Imember);
+        
+      project.amount += buyProjectDto.amount;
+      //project.save();
+      //this.projectModel.findByIdAndUpdate(project._id,project).exec();
+    }
 
-        // });
-        project.amount += buyProjectDto.amount;
-        project.save();
-      }
 
       project.member.push(user._id);
       await project.save();
     }
   }
 
-  async findMember(id: string) {}
+  async findMember(id: string) {
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  }
+
+
+  async findOne(id: string) {
+    const projectExits = await this.projectModel
+      .findById(id)
+      .exec();
+    if (projectExits) {
+      return projectExits
+    }
   }
 
   update(id: number, updateProjectDto: UpdateProjectDto) {
     return `This action updates a #${id} project`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: string) {
+
+    //todo
+    return await this.projectModel.findByIdAndDelete(id).exec();
   }
 }
