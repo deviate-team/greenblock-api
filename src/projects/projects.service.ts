@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { Project, ProjectDocument } from './schemas/project.schema';
+import { Injectable, HttpException } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { BuyProjectDto } from './dto/buy-project.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Imember } from '@/common/interfaces/member.interface';
-import { HttpException } from '@nestjs/common';
+import { Project, ProjectDocument } from './schemas/project.schema';
+
+import { CreateProjectDto } from './dto/create-project.dto';
+import { JoinProjectDto } from './dto/join-project.dto';
+
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
-  ) {}
+  ) { }
 
   async create(createProjectDto: CreateProjectDto, user) {
     return await this.projectModel.create({
@@ -24,81 +23,94 @@ export class ProjectsService {
     return await this.projectModel.find().exec();
   }
 
-  async buy(buyProjectDto: BuyProjectDto, user) {
-    const project = await this.projectModel.findById(buyProjectDto.id).exec();
-    if (!project) {
-      throw new Error('project not found');
-    }
-    const maximum: number = project.maximum;
-
-    if (project.amount + buyProjectDto.amount > maximum) {
-      throw new Error('maximum amount exceeded');
-    }
-
-    const addAmount = await this.projectModel.findOneAndUpdate({ _id: buyProjectDto.id }, { $inc: { amount: buyProjectDto.amount }})
-
-    const isIDinMember = await this.projectModel
-      .findOne({ _id: project.id, 'member.user': user._id })
-      .exec();
-    if (isIDinMember == null) {
-    const isIDinMember = await this.projectModel
-      .findOne({ _id: project.id, 'member.user': user._id })
-      .exec();
-    if (isIDinMember == null) {
-      const now = new Date();
-      const updateMember = await this.projectModel.findOneAndUpdate(
-        { _id: project.id },
+  async join(id: string, buyProjectDto: JoinProjectDto, user) {
+    const { amount } = buyProjectDto;
+    if (amount < 0) {
+      throw new HttpException(
         {
-          $push: {
-            member: {
-              user: user._id,
-              amount: buyProjectDto.amount,
-              lastbuy: now.toLocaleDateString(),
-              percentage: 0,
-            },
-          },
+          success: false,
+          message: 'Amount must be greater than 0',
         },
+        400,
       );
+    }
+
+    const projectExists = await this.projectModel.findById(id).exec();
+    if (!projectExists) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Project not found',
+        },
+        404,
+      );
+    }
+    const maximum_shares = projectExists.max_shares;
+    if (amount + projectExists.balance > maximum_shares) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Amount exceeds maximum shares',
+        },
+        400,
+      );
+    }
+
+    // if user is not in member, add user to member also if user is in member, update the amount
+    const userExists = projectExists.shares_holders.find(
+      (member) => member.user == user._id,
+    );
+
+    if (userExists) {
+      const index = projectExists.shares_holders.findIndex(
+        (member) => member.user == user._id,
+      );
+      projectExists.shares_holders[index].shares += amount;
+      projectExists.shares_holders[index].percentage =
+        (projectExists.shares_holders[index].shares / maximum_shares) * 100;
+      projectExists.shares_holders[index].last_payment = new Date();
     } else {
-      const now = new Date();
-      
-      const currentAmount = project.member.find((m) =>
-        m.user.equals(user._id),
-      ).amount;
-
-      const updatedAmount = currentAmount + buyProjectDto.amount;
-      const updatedLastBuy = now.toLocaleDateString(); // Set the new value for lastbuy here
-      const updatedPercentage = (updatedAmount / maximum) * 100; // Set the new value for percentage here
-
-      const updateMember = await this.projectModel.findOneAndUpdate(
-        { _id: project.id, 'member.user': user._id },
-        {
-          $set: {
-            'member.$.amount': updatedAmount,
-            'member.$.lastbuy': updatedLastBuy,
-            'member.$.percentage': updatedPercentage,
-          },
-        },
-        { new: true },
-      );
+      projectExists.shares_holders.push({
+        user: user._id,
+        shares: amount,
+        percentage: (amount / maximum_shares) * 100,
+        last_payment: new Date(),
+      });
     }
+
+    projectExists.balance += amount;
+    await projectExists.save();
+
+    return projectExists;
   }
-}
-  async findMember(id: string) {}
 
   async findOne(id: string) {
-    const projectExits = await this.projectModel.findById(id).exec();
-    if (projectExits) {
-      return projectExits;
+    const projectExists = await this.projectModel.findById(id).exec();
+    if (!projectExists) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Project not found',
+        },
+        404,
+      );
     }
-  }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+    return projectExists;
   }
 
   async remove(id: string) {
-    //todo
+    const projectExists = await this.projectModel.findById(id).exec();
+    if (!projectExists) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Project not found',
+        },
+        404,
+      );
+    }
+
     return await this.projectModel.findByIdAndDelete(id).exec();
   }
 }

@@ -105,7 +105,7 @@ export class TicketsService {
     const { quantity, option } = bookingDto;
 
     if (!ticketExists) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'Ticket not found',
@@ -115,7 +115,7 @@ export class TicketsService {
     }
 
     if (ticketExists.seat_booked.length >= ticketExists.seat_limit) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'Ticket is full',
@@ -125,7 +125,7 @@ export class TicketsService {
     }
 
     if (quantity > ticketExists.seat_limit - ticketExists.seat_booked.length) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'Not enough tickets',
@@ -135,7 +135,6 @@ export class TicketsService {
     }
 
     // TODO: Check if user no enough balance
-
     const updatedTicket = await this.ticketModel
       .findByIdAndUpdate(
         id,
@@ -195,7 +194,7 @@ export class TicketsService {
     const ticketExists = await this.ticketModel.findById(id).exec();
 
     if (!ticketExists) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'Ticket not found',
@@ -205,7 +204,7 @@ export class TicketsService {
     }
 
     if (ticketExists.provider.toString() !== user._id.toString()) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'You are not authorized to update this ticket',
@@ -238,7 +237,7 @@ export class TicketsService {
       .exec();
 
     if (!ticketExists) {
-      return new HttpException(
+      throw new HttpException(
         {
           success: false,
           message: 'Ticket not found',

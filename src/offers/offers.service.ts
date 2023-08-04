@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
 import { OfferDocument } from './schemas/offer.schema';
-import {InjectModel} from '@nestjs/mongoose';
-import {Model} from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 // import { Offer } from './entities/offer.entity';
 import { Offer } from './schemas/offer.schema';
 import { BuyCarbonDto } from './dto/buy-carbon.dto';
@@ -36,7 +36,7 @@ export class OffersService {
       throw new Error('Not enough carbon available');
     }
     // const project = await this.projectsService.findOne(offer.project_id);
-    
+
     offer.available -= buyCarbonDto.amount;
     offer.save();
 

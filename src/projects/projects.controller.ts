@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+
 import { GetUser } from '@/common/decorators/get-user.decorator';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtGuard } from '@/common/guards/jwt.guard';
@@ -17,7 +17,7 @@ import { Role } from '@/common/enums/role.enum';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { BuyProjectDto } from './dto/buy-project.dto';
+import { JoinProjectDto } from './dto/join-project.dto';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
@@ -40,11 +40,20 @@ export class ProjectsController {
     };
   }
 
-  @Post('/buy')
+  @Patch(':id/join')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
-  async Buy(@GetUser() user, @Body() buyProjectDto: BuyProjectDto) {
-    const newProject = await this.projectsService.buy(buyProjectDto, user);
+  async join(
+    @Param('id') id: string,
+    @Body() joinProjectDto: JoinProjectDto,
+    @GetUser() user,
+  ) {
+    const newProject = await this.projectsService.join(
+      id,
+      joinProjectDto,
+      user,
+    );
+
     return {
       success: true,
       message: 'Buy Project successfully',

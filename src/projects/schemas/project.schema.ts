@@ -2,10 +2,15 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Document, Types } from 'mongoose';
 
 import { User } from '@/users/schemas/user.schema';
-import { IContract } from '@/common/interfaces/contract.interface';
-import { ITimePeriod } from '@/common/interfaces/timePeroid.interface';
-import { Imember } from '@/common/interfaces/member.interface';
+
 export type ProjectDocument = Project & HydratedDocument<Project>;
+
+export type ProjectMember = {
+  user: User;
+  shares: number;
+  percentage: number;
+  last_payment: Date;
+};
 
 @Schema()
 export class Project extends Document {
@@ -15,35 +20,39 @@ export class Project extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: false, type: Types.ObjectId, ref: 'User' })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   owner: User;
 
-  @Prop({ required: true, type: Types.ObjectId })
-  contract: IContract;
+  @Prop({ required: true, type: Object })
+  contact: {
+    name: string;
+    email: string;
+    phoneNumber: string;
+  };
 
   @Prop({ required: true })
-  price_by_unit: number;
+  start_date: Date;
 
-  @Prop({ required: true, type: Types.ObjectId })
-  time_period: ITimePeriod;
+  @Prop({ required: true })
+  end_date: Date;
 
   @Prop({ required: true })
   image: string;
 
   @Prop({ required: true })
-  maximum: number;
+  max_shares: number;
 
   @Prop({ default: 0 })
-  amount: number;
+  balance: number;
+
+  @Prop({ default: 0 })
+  shares_holders: ProjectMember[];
 
   @Prop({ default: Date.now })
   createdAt: Date;
 
   @Prop({ default: Date.now })
   updatedAt: Date;
-
-  @Prop({ default: null })
-  member: [Imember];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

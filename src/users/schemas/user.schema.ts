@@ -46,15 +46,14 @@ export class User extends Document {
   @Prop({ default: 150 })
   money: number;
 
-  @Prop({ default: 25 })
+  @Prop({ default: 0 })
   retailCC: number;
 
-  @Prop({ default: 25 })
+  @Prop({ default: 0 })
   carbonCredit: number;
 
   @Prop({ default: Date.now })
   createdAt: Date;
-  
 
   @Prop({ default: Date.now })
   updatedAt: Date;

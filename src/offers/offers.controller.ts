@@ -33,9 +33,9 @@ export class OffersController {
 
   @Post('/buy')
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.User,Role.Provider, Role.Admin)
+  @Roles(Role.User, Role.Provider, Role.Admin)
   buyCarbon(@Body() buyCarbonDto: BuyCarbonDto, @GetUser() user) {
-    return this.offersService.buyCarbon(buyCarbonDto,user);
+    return this.offersService.buyCarbon(buyCarbonDto, user);
   }
 
   @Get()
