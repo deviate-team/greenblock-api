@@ -16,7 +16,7 @@ export class TicketsService {
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly transactionService: TransactionsService,
-  ) { }
+  ) {}
 
   async create(createTicketDto: CreateTicketDto, user) {
     await this.ticketModel.create({

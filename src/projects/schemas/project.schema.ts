@@ -6,7 +6,7 @@ import { User } from '@/users/schemas/user.schema';
 export type ProjectDocument = Project & HydratedDocument<Project>;
 
 export type ProjectMember = {
-  user: User;
+  user: string;
   shares: number;
   percentage: number;
   last_payment: Date;
