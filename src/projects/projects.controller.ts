@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -20,7 +28,10 @@ export class ProjectsController {
   @Roles(Role.Provider, Role.Admin)
   async create(@Body() createProjectDto: CreateProjectDto, @GetUser() user) {
     console.log(user);
-    const newProject = await this.projectsService.create(createProjectDto, user);
+    const newProject = await this.projectsService.create(
+      createProjectDto,
+      user,
+    );
     return {
       success: true,
       message: 'Project created successfully',
