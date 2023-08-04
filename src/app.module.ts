@@ -10,8 +10,8 @@ import { AppService } from './app.service';
 
 import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
-import { TransactionModule } from './transaction/transaction.module';
 import { UsersModule } from './users/users.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -28,8 +28,8 @@ import { UsersModule } from './users/users.module';
     }),
     AuthModule,
     TicketsModule,
-    TransactionModule,
     UsersModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
