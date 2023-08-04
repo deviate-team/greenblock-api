@@ -34,13 +34,11 @@ export class ProjectsService {
     if (project.amount + buyProjectDto.amount > maximum) {
       throw new Error('maximum amount exceeded');
     }
-    const AddAmount = await this.projectModel.findOneAndUpdate({ _id: project.id }, {
-      $inc: {
-        amount: buyProjectDto.amount,
-      },
-    }
-    );
-    
+
+    const isIDinMember = await this.projectModel
+      .findOne({ _id: project.id, 'member.user': user._id })
+      .exec();
+    if (isIDinMember == null) {
     const isIDinMember = await this.projectModel
       .findOne({ _id: project.id, 'member.user': user._id })
       .exec();
@@ -81,10 +79,9 @@ export class ProjectsService {
         },
         { new: true },
       );
-      console.log(updateMember);
     }
   }
-
+}
   async findMember(id: string) {}
 
   async findOne(id: string) {

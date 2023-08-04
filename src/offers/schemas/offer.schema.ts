@@ -33,7 +33,6 @@ export class Offer extends Document {
 
   @Prop({ default: Date.now })
   updatedAt: Date;
-
 }
 
 export const OfferSchema = SchemaFactory.createForClass(Offer);

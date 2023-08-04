@@ -28,7 +28,7 @@ export class OffersController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   create(@Body() createOfferDto: CreateOfferDto, @GetUser() user) {
-    return this.offersService.create(createOfferDto,user);
+    return this.offersService.create(createOfferDto, user);
   }
 
   @Post('/buy')
