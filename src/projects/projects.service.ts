@@ -6,11 +6,13 @@ import { Project, ProjectDocument } from './schemas/project.schema';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { JoinProjectDto } from './dto/join-project.dto';
 
+import { User, UserDocument } from '@/users/schemas/user.schema';
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
-  ) {}
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+  ) { }
 
   async create(createProjectDto: CreateProjectDto, user) {
     return await this.projectModel.create({
@@ -34,7 +36,6 @@ export class ProjectsService {
         400,
       );
     }
-
     const projectExists = await this.projectModel.findById(id).exec();
     if (!projectExists) {
       throw new HttpException(
@@ -45,7 +46,20 @@ export class ProjectsService {
         404,
       );
     }
+
     const maximum_shares = projectExists.max_shares;
+    const currentUser = await this.userModel.findById(user._id).exec();
+
+    if (currentUser.money < amount) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Insufficient balance',
+        },
+        400,
+      );
+    }
+
     if (amount + projectExists.balance > maximum_shares) {
       throw new HttpException(
         {
@@ -79,8 +93,9 @@ export class ProjectsService {
     }
 
     projectExists.balance += amount;
+    currentUser.money -= amount;
+    await currentUser.save();
     await projectExists.save();
-
     return projectExists;
   }
 
