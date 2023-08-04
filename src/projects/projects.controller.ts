@@ -18,6 +18,7 @@ import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { BuyProjectDto } from './dto/buy-project.dto';
+
 @ApiTags('Projects')
 @ApiBearerAuth()
 @Controller('projects')

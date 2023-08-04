@@ -17,6 +17,7 @@ import { Role } from '@/common/enums/role.enum';
 import { UseGuards } from '@nestjs/common';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
+import { BuyCarbonDto } from './dto/buy-carbon.dto';
 @ApiTags('Offers')
 @ApiBearerAuth()
 @Controller('offers')
@@ -28,6 +29,13 @@ export class OffersController {
   @Roles(Role.Provider, Role.Admin)
   create(@Body() createOfferDto: CreateOfferDto, @GetUser() user) {
     return this.offersService.create(createOfferDto,user);
+  }
+
+  @Post('/buy')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.User,Role.Provider, Role.Admin)
+  buyCarbon(@Body() buyCarbonDto: BuyCarbonDto, @GetUser() user) {
+    return this.offersService.buyCarbon(buyCarbonDto,user);
   }
 
   @Get()
