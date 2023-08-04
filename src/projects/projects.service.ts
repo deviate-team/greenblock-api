@@ -35,6 +35,8 @@ export class ProjectsService {
       throw new Error('maximum amount exceeded');
     }
 
+    const addAmount = await this.projectModel.findOneAndUpdate({ _id: buyProjectDto.id }, { $inc: { amount: buyProjectDto.amount }})
+
     const isIDinMember = await this.projectModel
       .findOne({ _id: project.id, 'member.user': user._id })
       .exec();
