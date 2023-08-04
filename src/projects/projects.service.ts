@@ -26,60 +26,62 @@ export class ProjectsService {
 
   async buy(buyProjectDto: BuyProjectDto, user) {
     const project = await this.projectModel.findById(buyProjectDto.id).exec();
-    if(!project){
+    if (!project) {
       throw new Error('project not found');
     }
-    const maximum:number = project.maximum;
+    const maximum: number = project.maximum;
 
     if (project.amount + buyProjectDto.amount > maximum) {
       throw new Error('maximum amount exceeded');
     }
 
-    const isIDinMember = await this.projectModel.findOne({ _id: project.id, 'member.user': user._id }).exec();
-    if(isIDinMember == null){
+    const isIDinMember = await this.projectModel
+      .findOne({ _id: project.id, 'member.user': user._id })
+      .exec();
+    if (isIDinMember == null) {
       const now = new Date();
-      const updateMember = await this.projectModel.findOneAndUpdate({ _id: project.id }, { $push: { member: { 
-        user: user._id,
-        amount: buyProjectDto.amount,
-        lastbuy: now.toLocaleDateString(),
-        percentage: 0 } } });
-    }else{
-      const now = new Date();
-      const currentAmount = project.member.find((m) => m.user.equals(user._id))
-    .amount;
-
-  const updatedAmount = currentAmount + buyProjectDto.amount;
-  const updatedLastBuy = now.toLocaleDateString(); // Set the new value for lastbuy here
-  const updatedPercentage = (updatedAmount / maximum) * 100; // Set the new value for percentage here
-
-    const updateMember = await this.projectModel.findOneAndUpdate(
-      { _id: project.id, 'member.user': user._id },
-      {
-        $set: {
-          'member.$.amount': updatedAmount,
-          'member.$.lastbuy': updatedLastBuy,
-          'member.$.percentage': updatedPercentage,
+      const updateMember = await this.projectModel.findOneAndUpdate(
+        { _id: project.id },
+        {
+          $push: {
+            member: {
+              user: user._id,
+              amount: buyProjectDto.amount,
+              lastbuy: now.toLocaleDateString(),
+              percentage: 0,
+            },
+          },
         },
-      },
-    { new: true }
-  );
-  console.log(updateMember);
+      );
+    } else {
+      const now = new Date();
+      const currentAmount = project.member.find((m) =>
+        m.user.equals(user._id),
+      ).amount;
+
+      const updatedAmount = currentAmount + buyProjectDto.amount;
+      const updatedLastBuy = now.toLocaleDateString(); // Set the new value for lastbuy here
+      const updatedPercentage = (updatedAmount / maximum) * 100; // Set the new value for percentage here
+
+      const updateMember = await this.projectModel.findOneAndUpdate(
+        { _id: project.id, 'member.user': user._id },
+        {
+          $set: {
+            'member.$.amount': updatedAmount,
+            'member.$.lastbuy': updatedLastBuy,
+            'member.$.percentage': updatedPercentage,
+          },
+        },
+        { new: true },
+      );
     }
-
-  }
-
-
-  async findMember(id: string) {
-
   }
 
 
   async findOne(id: string) {
-    const projectExits = await this.projectModel
-      .findById(id)
-      .exec();
+    const projectExits = await this.projectModel.findById(id).exec();
     if (projectExits) {
-      return projectExits
+      return projectExits;
     }
   }
 
@@ -88,7 +90,6 @@ export class ProjectsService {
   }
 
   async remove(id: string) {
-
     //todo
     return await this.projectModel.findByIdAndDelete(id).exec();
   }
