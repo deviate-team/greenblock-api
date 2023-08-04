@@ -10,14 +10,24 @@ import {
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
-
+import { GetUser } from '@/common/decorators/get-user.decorator';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtGuard } from '@/common/guards/jwt.guard';
+import { Role } from '@/common/enums/role.enum';
+import { UseGuards } from '@nestjs/common';
+import { Roles } from '@/common/decorators/roles.decorator';
+import { RolesGuard } from '@/common/guards/roles.guard';
+@ApiTags('Offers')
+@ApiBearerAuth()
 @Controller('offers')
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
   @Post()
-  create(@Body() createOfferDto: CreateOfferDto) {
-    return this.offersService.create(createOfferDto);
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Provider, Role.Admin)
+  create(@Body() createOfferDto: CreateOfferDto, @GetUser() user) {
+    return this.offersService.create(createOfferDto, user);
   }
 
   @Get()
@@ -26,8 +36,8 @@ export class OffersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return this.offersService.findOne(id);
   }
 
   @Patch(':id')

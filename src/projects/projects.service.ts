@@ -78,17 +78,11 @@ export class ProjectsService {
     }
   }
 
-  async findMember(id: string) {}
-
   async findOne(id: string) {
     const projectExits = await this.projectModel.findById(id).exec();
     if (projectExits) {
       return projectExits;
     }
-  }
-
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
   }
 
   async remove(id: string) {
