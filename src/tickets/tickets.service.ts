@@ -21,7 +21,15 @@ export class TicketsService {
   }
 
   async findAll() {
-    return await this.ticketModel.find().exec();
+    return await this.ticketModel
+      .find()
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate',
+      )
+      .select('-__v')
+      .sort({ createdAt: -1 })
+      .exec();
   }
 
   async findAllWithPagination(page = '1', limit = '10') {
@@ -33,6 +41,12 @@ export class TicketsService {
       .find()
       .limit(parsedLimit)
       .skip((parsedPage - 1) * parsedLimit)
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate',
+      )
+      .select('-__v')
+      .sort({ createdAt: -1 })
       .exec();
 
     return {
@@ -44,7 +58,14 @@ export class TicketsService {
   }
 
   async findOne(id: string) {
-    const ticketExists = await this.ticketModel.findById(id).exec();
+    const ticketExists = await this.ticketModel
+      .findById(id)
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate',
+      )
+      .select('-__v')
+      .exec();
     if (!ticketExists) {
       return new HttpException(
         {
@@ -60,6 +81,7 @@ export class TicketsService {
 
   async update(id: string, updateTicketDto: UpdateTicketDto, user) {
     const ticketExists = await this.ticketModel.findById(id).exec();
+
     if (!ticketExists) {
       return new HttpException(
         {
@@ -80,17 +102,28 @@ export class TicketsService {
       );
     }
 
-    const updatedTicket = await this.ticketModel.findByIdAndUpdate(
-      id,
-      updateTicketDto,
-      { new: true },
-    );
+    const updatedTicket = await this.ticketModel
+      .findByIdAndUpdate(id, updateTicketDto, { new: true })
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate',
+      )
+      .select('-__v')
+      .exec();
 
     return updatedTicket;
   }
 
   async remove(id: string) {
-    const ticketExists = await this.ticketModel.findById(id).exec();
+    const ticketExists = await this.ticketModel
+      .findById(id)
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate',
+      )
+      .select('-__v')
+      .exec();
+
     if (!ticketExists) {
       return new HttpException(
         {

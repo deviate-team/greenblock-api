@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsNotEmpty,
   IsDateString,
+  IsPhoneNumber
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -82,7 +83,9 @@ export class SignUpDto {
     description: 'User phone number',
     type: String,
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsPhoneNumber('ID')
+  @IsNotEmpty({
+    message: 'Phone number is required',
+  })
   readonly phoneNumber: string;
 }

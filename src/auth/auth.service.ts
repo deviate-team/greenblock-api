@@ -65,12 +65,23 @@ export class AuthService {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const { email, username, password, confirmPassword } = signUpDto;
+    const { email, username, password, confirmPassword, phoneNumber } =
+      signUpDto;
     if (password !== confirmPassword) {
       throw new HttpException(
         {
           success: false,
           message: 'Passwords do not match',
+        },
+        400,
+      );
+    }
+
+    if (!phoneNumber) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Phone number is required',
         },
         400,
       );
