@@ -25,7 +25,7 @@ export class TicketsService {
       .find()
       .populate(
         'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName -firstName -lastName',
       )
       .select('-__v')
       .sort({ createdAt: -1 })
@@ -43,7 +43,7 @@ export class TicketsService {
       .skip((parsedPage - 1) * parsedLimit)
       .populate(
         'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
       )
       .select('-__v')
       .sort({ createdAt: -1 })
@@ -62,7 +62,7 @@ export class TicketsService {
       .findById(id)
       .populate(
         'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
       )
       .select('-__v')
       .exec();
@@ -106,7 +106,7 @@ export class TicketsService {
       .findByIdAndUpdate(id, updateTicketDto, { new: true })
       .populate(
         'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
       )
       .select('-__v')
       .exec();
@@ -119,7 +119,7 @@ export class TicketsService {
       .findById(id)
       .populate(
         'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
       )
       .select('-__v')
       .exec();
