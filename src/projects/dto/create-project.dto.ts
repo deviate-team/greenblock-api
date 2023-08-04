@@ -31,7 +31,7 @@ export class CreateProjectDto {
   })
   @IsObject()
   @IsNotEmpty()
-  contact: {
+  contract: {
     name: string;
     email: string;
     phoneNumber: string;

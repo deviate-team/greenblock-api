@@ -22,7 +22,7 @@ export class ProjectsService {
   }
 
   async findAll() {
-    return await this.projectModel.find().exec();
+    return await this.projectModel.find().select('-__v').exec();
   }
 
   async join(id: string, buyProjectDto: JoinProjectDto, user) {

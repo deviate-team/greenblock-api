@@ -24,7 +24,7 @@ export class Project extends Document {
   owner: User;
 
   @Prop({ required: true, type: Object })
-  contact: {
+  contract: {
     name: string;
     email: string;
     phoneNumber: string;
