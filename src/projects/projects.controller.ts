@@ -28,7 +28,10 @@ export class ProjectsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   async create(@Body() createProjectDto: CreateProjectDto, @GetUser() user) {
-    const newProject = await this.projectsService.create(createProjectDto, user);
+    const newProject = await this.projectsService.create(
+      createProjectDto,
+      user,
+    );
     return {
       success: true,
       message: 'Project created successfully',
@@ -39,7 +42,7 @@ export class ProjectsController {
   @Post()
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
-  async Buy(@GetUser() user,@Body() buyProjectDto: BuyProjectDto) {
+  async Buy(@GetUser() user, @Body() buyProjectDto: BuyProjectDto) {
     const newProject = await this.projectsService.buy(buyProjectDto, user);
     return {
       success: true,

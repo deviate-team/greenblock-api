@@ -14,25 +14,10 @@ export class TicketsService {
   ) {}
 
   async create(createTicketDto: CreateTicketDto, user) {
-    const newTicket = await this.ticketModel.create({
+    await this.ticketModel.create({
       ...createTicketDto,
       provider: user._id,
     });
-
-    const ticket = await this.ticketModel
-      .findById(newTicket._id)
-      .populate(
-        'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
-      )
-      .select('-__v')
-      .exec();
-
-    return {
-      ...ticket.toJSON(),
-      seat_booked: ticket.seat_booked.length,
-      availableTickets: ticket.seat_limit - ticket.seat_booked.length,
-    };
   }
 
   async findAll() {
@@ -211,10 +196,6 @@ export class TicketsService {
   async remove(id: string) {
     const ticketExists = await this.ticketModel
       .findById(id)
-      .populate(
-        'provider',
-        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
-      )
       .select('-__v')
       .exec();
 
@@ -227,14 +208,6 @@ export class TicketsService {
         404,
       );
     }
-
-    const ticketRemoved = await this.ticketModel.findByIdAndDelete(id);
-
-    return {
-      ...ticketRemoved.toJSON(),
-      seat_booked: ticketRemoved.seat_booked.length,
-      availableTickets:
-        ticketRemoved.seat_limit - ticketRemoved.seat_booked.length,
-    };
+    await this.ticketModel.findByIdAndDelete(id);
   }
 }
