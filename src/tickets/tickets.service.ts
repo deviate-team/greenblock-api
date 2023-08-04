@@ -11,13 +11,22 @@ import { Ticket, TicketDocument } from './schemas/ticket.schema';
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
-  ) {}
+  ) { }
 
   async create(createTicketDto: CreateTicketDto, user) {
-    return await this.ticketModel.create({
+    const newTicket = await this.ticketModel.create({
       ...createTicketDto,
       provider: user._id,
     });
+
+    return await this.ticketModel
+      .findById(newTicket._id)
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+      )
+      .select('-__v')
+      .exec();
   }
 
   async findAll() {
