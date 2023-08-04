@@ -12,7 +12,7 @@ export class ProjectsService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) { }
+  ) {}
 
   async create(createProjectDto: CreateProjectDto, user) {
     return await this.projectModel.create({
