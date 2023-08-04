@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Document } from 'mongoose';
 
 
-export type OfferDocument = Offer & HydratedDocument<Offer>;
+export type OffsetDocument = Offset & HydratedDocument<Offset>;
 
 export interface TimePeriod {
     start: Date;
@@ -16,7 +16,7 @@ export interface Contract {
 }
 
 @Schema()
-export class Offer extends Document {
+export class Offset extends Document {
     @Prop({ required: true })
     type: string;
 
@@ -49,4 +49,4 @@ export class Offer extends Document {
     maximun:5;
 }
 
-export const OfferSchema = SchemaFactory.createForClass(Offer);
+export const OffsetSchema = SchemaFactory.createForClass(Offset);

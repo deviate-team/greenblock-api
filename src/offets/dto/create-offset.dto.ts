@@ -1,6 +1,5 @@
-import { TimePeriod, Contract } from '../schemas/offer.schema';
-export class CreateOfferDto {
-    type: string;
+import { TimePeriod, Contract } from '../schemas/offset.schema';
+export class CreateOffsetDto {
     project_name: string;
     description: string;
     owner: string;
