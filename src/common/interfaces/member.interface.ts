@@ -4,6 +4,6 @@ export interface Imember {
     updateMany(arg0: Imember): unknown;
     user: User;
     amount: number;
-    lastbuy: Date;
+    lastbuy: string;
     percentage: number;
 }
