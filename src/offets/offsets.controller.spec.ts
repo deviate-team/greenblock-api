@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OffsetController } from './offset.controller';
-import { OffsetService } from './offset.service';
+import { OffsetController } from './offsets.controller';
+import { OffsetService } from './offsets.service';
 
 describe('OffsetController', () => {
   let controller: OffsetController;

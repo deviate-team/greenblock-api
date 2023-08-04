@@ -1,4 +1,4 @@
-import { TimePeriod, Contract } from '../schemas/offset.schema';
+import { TimePeriod, Contract } from '../schemas/offsets.schema';
 export class CreateOffsetDto {
     project_name: string;
     description: string;

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { OffsetService } from './offset.service';
-import { OffsetController } from './offset.controller';
+import { OffsetService } from './offsets.service';
+import { OffsetController } from './offsets.controller';
 import {MongooseModule} from '@nestjs/mongoose';
 
-import { Offset, OffsetSchema } from './schemas/offset.schema';
+import { Offset, OffsetSchema } from './schemas/offsets.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Offset.name, schema: OffsetSchema }]),

@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { OffsetService } from './offset.service';
-import { CreateOffsetDto } from './dto/create-offset.dto';
-import { UpdateOffsetDto } from './dto/update-offset.dto';
+import { OffsetService } from './offsets.service';
+import { CreateOffsetDto } from './dto/create-offsets.dto';
+import { UpdateOffsetDto } from './dto/update-offsets.dto';
 
-@Controller('Offset')
+@Controller('Offsets')
 export class OffsetController {
   constructor(private readonly OffsetService: OffsetService) {}
 
