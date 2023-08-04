@@ -43,6 +43,12 @@ export class User extends Document {
   @Prop({ required: true, enum: Role, default: Role.User })
   role: string;
 
+  @Prop({ default: 150})
+  money: number;
+
+  @Prop({ default: 25})
+  retailCC: number;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 
