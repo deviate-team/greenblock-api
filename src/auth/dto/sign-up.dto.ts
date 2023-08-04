@@ -77,4 +77,12 @@ export class SignUpDto {
     minLength: 8,
   })
   readonly confirmPassword: string;
+
+  @ApiProperty({
+    description: 'User phone number',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly phoneNumber: string;
 }
