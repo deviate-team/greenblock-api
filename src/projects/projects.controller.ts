@@ -36,7 +36,7 @@ export class ProjectsController {
     };
   }
 
-  @Post()
+  @Post('/buy')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.Provider, Role.Admin)
   async Buy(@GetUser() user,@Body() buyProjectDto: BuyProjectDto) {
@@ -59,8 +59,18 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const project =  await this.projectsService.findOne(id);
+    console.log(project);
+    if(project == undefined){
+      throw new Error('project not found');
+    }else{
+      return {
+        success: true,
+        message: 'Projects retrieved successfully',
+        data: project,
+      };
+  }
   }
 
   @Patch(':id')
@@ -69,7 +79,15 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectsService.remove(+id);
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.Provider, Role.Admin)
+  async remove(@Param('id') id: string) {
+    console.log(id);
+    const projectRemoved =  await this.projectsService.remove(id);
+    return {
+      success: true,
+      message: 'Ticket removed successfully',
+      data: projectRemoved,
+    };
   }
 }
