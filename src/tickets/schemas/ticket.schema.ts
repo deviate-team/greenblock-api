@@ -47,6 +47,9 @@ export class Ticket extends Document {
   @Prop({ required: true })
   seat_limit: number;
 
+  @Prop({ required: true, type: [Types.ObjectId], ref: 'User' })
+  seat_booked: Types.ObjectId[];
+
   @Prop({ default: Date.now })
   createdAt: Date;
 

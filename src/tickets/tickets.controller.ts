@@ -40,6 +40,17 @@ export class TicketsController {
     };
   }
 
+  @Post(':id/book')
+  @UseGuards(JwtGuard)
+  async book(@Param('id') id: string, @GetUser() user) {
+    const ticket = await this.ticketsService.book(id, user);
+    return {
+      success: true,
+      message: 'Ticket booked successfully',
+      data: ticket,
+    };
+  }
+
   @Get('/list')
   async findAllWithPagination(
     @Query('page') page: string,

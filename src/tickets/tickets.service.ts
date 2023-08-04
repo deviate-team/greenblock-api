@@ -11,7 +11,7 @@ import { Ticket, TicketDocument } from './schemas/ticket.schema';
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>,
-  ) { }
+  ) {}
 
   async create(createTicketDto: CreateTicketDto, user) {
     const newTicket = await this.ticketModel.create({
@@ -19,7 +19,7 @@ export class TicketsService {
       provider: user._id,
     });
 
-    return await this.ticketModel
+    const ticket = await this.ticketModel
       .findById(newTicket._id)
       .populate(
         'provider',
@@ -27,10 +27,16 @@ export class TicketsService {
       )
       .select('-__v')
       .exec();
+
+    return {
+      ...ticket.toJSON(),
+      seat_booked: ticket.seat_booked.length,
+      availableTickets: ticket.seat_limit - ticket.seat_booked.length,
+    };
   }
 
   async findAll() {
-    return await this.ticketModel
+    const tickets = await this.ticketModel
       .find()
       .populate(
         'provider',
@@ -39,6 +45,13 @@ export class TicketsService {
       .select('-__v')
       .sort({ createdAt: -1 })
       .exec();
+    const transformedTickets = tickets.map((ticket) => ({
+      ...ticket.toJSON(),
+      seat_booked: ticket.seat_booked.length,
+      availableTickets: ticket.seat_limit - ticket.seat_booked.length,
+    }));
+
+    return transformedTickets;
   }
 
   async findAllWithPagination(page = '1', limit = '10') {
@@ -58,11 +71,17 @@ export class TicketsService {
       .sort({ createdAt: -1 })
       .exec();
 
+    const transformedTickets = tickets.map((ticket) => ({
+      ...ticket.toJSON(),
+      seat_booked: ticket.seat_booked.length,
+      availableTickets: ticket.seat_limit - ticket.seat_booked.length,
+    }));
+
     return {
       totalTickets: count,
       currentPage: parsedPage,
       totalPages: Math.ceil(count / parsedLimit),
-      tickets,
+      tickets: transformedTickets,
     };
   }
 
@@ -85,7 +104,68 @@ export class TicketsService {
       );
     }
 
-    return ticketExists;
+    return {
+      ...ticketExists.toJSON(),
+      seat_booked: ticketExists.seat_booked.length,
+      availableTickets:
+        ticketExists.seat_limit - ticketExists.seat_booked.length,
+    };
+  }
+
+  async book(id: string, user) {
+    const ticketExists = await this.ticketModel.findById(id).exec();
+
+    if (!ticketExists) {
+      return new HttpException(
+        {
+          success: false,
+          message: 'Ticket not found',
+        },
+        404,
+      );
+    }
+
+    if (ticketExists.seat_booked.length >= ticketExists.seat_limit) {
+      return new HttpException(
+        {
+          success: false,
+          message: 'Ticket is full',
+        },
+        400,
+      );
+    }
+
+    if (ticketExists.seat_booked.includes(user._id)) {
+      return new HttpException(
+        {
+          success: false,
+          message: 'You already booked this ticket',
+        },
+        400,
+      );
+    }
+
+    const updatedTicket = await this.ticketModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $push: { seat_booked: user._id },
+        },
+        { new: true },
+      )
+      .populate(
+        'provider',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+      )
+      .select('-__v')
+      .exec();
+
+    return {
+      ...updatedTicket.toJSON(),
+      seat_booked: updatedTicket.seat_booked.length,
+      availableTickets:
+        updatedTicket.seat_limit - updatedTicket.seat_booked.length,
+    };
   }
 
   async update(id: string, updateTicketDto: UpdateTicketDto, user) {
@@ -120,7 +200,12 @@ export class TicketsService {
       .select('-__v')
       .exec();
 
-    return updatedTicket;
+    return {
+      ...updatedTicket.toJSON(),
+      seat_booked: updatedTicket.seat_booked.length,
+      availableTickets:
+        updatedTicket.seat_limit - updatedTicket.seat_booked.length,
+    };
   }
 
   async remove(id: string) {
@@ -143,6 +228,13 @@ export class TicketsService {
       );
     }
 
-    return await this.ticketModel.findByIdAndDelete(id);
+    const ticketRemoved = await this.ticketModel.findByIdAndDelete(id);
+
+    return {
+      ...ticketRemoved.toJSON(),
+      seat_booked: ticketRemoved.seat_booked.length,
+      availableTickets:
+        ticketRemoved.seat_limit - ticketRemoved.seat_booked.length,
+    };
   }
 }
