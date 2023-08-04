@@ -45,7 +45,7 @@ export class Project extends Document {
   @Prop({ default: 0 })
   balance: number;
 
-  @Prop({ default: 0 })
+  @Prop({ default: [] })
   shares_holders: ProjectMember[];
 
   @Prop({ default: Date.now })
