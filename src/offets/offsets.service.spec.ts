@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OffsetService } from './offset.service';
+import { OffsetService } from './offsets.service';
 
 describe('OffsetService', () => {
   let service: OffsetService;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOffsetDto } from './dto/create-offset.dto';
-import { UpdateOffsetDto } from './dto/update-offset.dto';
-import { Offset ,OffsetDocument} from './schemas/offset.schema';
+import { CreateOffsetDto } from './dto/create-offsets.dto';
+import { UpdateOffsetDto } from './dto/update-offsets.dto';
+import { Offset ,OffsetDocument} from './schemas/offsets.schema';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
