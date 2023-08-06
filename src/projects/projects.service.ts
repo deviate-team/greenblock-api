@@ -98,7 +98,7 @@ export class ProjectsService {
         {
           $set: {
             'shares_holders.$.percentage': (amount / maximum_shares) * 100,
-            'shares_holders.$.last_paymet': new Date() ,
+            'shares_holders.$.last_paymet': new Date(),
           },
         },
         {

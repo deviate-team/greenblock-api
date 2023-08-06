@@ -27,17 +27,6 @@ export class TransactionsController {
     };
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const transaction = await this.transactionsService.findOne(id);
-
-    return {
-      success: true,
-      message: 'Transaction fetched successfully',
-      data: transaction,
-    };
-  }
-
   @Get('/list')
   async findAllWithPagination(
     @Query('page') page: string,
@@ -54,6 +43,17 @@ export class TransactionsController {
       success: true,
       message: 'Transactions fetched successfully',
       data: transactions,
+    };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const transaction = await this.transactionsService.findOne(id);
+
+    return {
+      success: true,
+      message: 'Transaction fetched successfully',
+      data: transaction,
     };
   }
 }
