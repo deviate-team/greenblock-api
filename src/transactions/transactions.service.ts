@@ -59,4 +59,21 @@ export class TransactionsService {
       transactions,
     };
   }
+
+  async findOne(id: string) {
+    const transaction = await this.transactionModel
+      .findById(id)
+      .populate(
+        'user',
+        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+      )
+      .populate(
+        'ticket',
+        '-__v -createdAt -updatedAt -seat_booked -seat_limit -provider',
+      )
+      .select('-__v')
+      .exec();
+
+    return transaction;
+  }
 }

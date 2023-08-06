@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 import { GetUser } from '@/common/decorators/get-user.decorator';
@@ -43,6 +43,17 @@ export class TransactionsController {
       success: true,
       message: 'Transactions fetched successfully',
       data: transactions,
+    };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const transaction = await this.transactionsService.findOne(id);
+
+    return {
+      success: true,
+      message: 'Transaction fetched successfully',
+      data: transaction,
     };
   }
 }
