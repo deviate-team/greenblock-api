@@ -10,13 +10,16 @@ import { BuyCarbonDto } from './dto/buy-carbon.dto';
 import { Project, ProjectDocument } from '@/projects/schemas/project.schema';
 import { ProjectsService } from '@/projects/projects.service';
 import { Inject } from '@nestjs/common';
+import { TransactionsService } from '@/transactions/transactions.service';
+import { User, UserDocument } from '@/users/schemas/user.schema';
+
 @Injectable()
 export class OffersService {
-  // @Inject(ProjectsService)
-  // private readonly projectsService: ProjectsService;
-
   constructor(
-    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>, //@InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
+    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>, 
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
+    private readonly transactionService: TransactionsService,
   ) {}
 
   async create(createOfferDto: CreateOfferDto, user) {
@@ -30,20 +33,40 @@ export class OffersService {
     return await this.offerModel.find({});
   }
 
-  async buyCarbon(buyCarbonDto: BuyCarbonDto, user) {
-    const offer = await this.offerModel.findById(buyCarbonDto.id);
+  async buyCarbon(id:string,buyCarbonDto: BuyCarbonDto, user) {
+    const offer = await this.offerModel.findById(id);
     if (offer.available < buyCarbonDto.amount) {
       throw new Error('Not enough carbon available');
     }
-    // const project = await this.projectsService.findOne(offer.project_id);
+    const currentUser = await this.userModel.findById(user._id).exec();
+    if (currentUser.money < buyCarbonDto.amount * offer.price_per_kg) {
+      throw new Error('Not enough money');
+    }
+    if(buyCarbonDto.amount > offer.available) {
+      throw new Error('Not enough carbon credit');
+    }
 
+    // share money
+    const project = await this.projectModel.findById(offer.project_id).exec();
+    if(project.shares_holders.length == 0) {
+      //No share Holder give all to owener
+      const owner = await this.userModel.findById(project.owner).exec();
+      owner.money += buyCarbonDto.amount * offer.price_per_kg;
+    }else{
+      let all_money:number  = 50;
+      for (const member of project.shares_holders) {
+        const user = await this.userModel.findById(member.user).exec();
+        user.money += buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100);
+        all_money -= buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100);
+        
+      }
+    }
+
+    currentUser.carbonCredit += buyCarbonDto.amount;
+    currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;
     offer.available -= buyCarbonDto.amount;
     offer.save();
-
-    // return await this.offerModel.create({
-    //   ...buyCarbonDto,
-    //   owner: user._id,
-    // });
+    currentUser.save();
   }
 
   async findOne(id: string) {
