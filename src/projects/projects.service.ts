@@ -5,13 +5,14 @@ import { Project, ProjectDocument } from './schemas/project.schema';
 
 import { CreateProjectDto } from './dto/create-project.dto';
 import { JoinProjectDto } from './dto/join-project.dto';
-
+import { TransactionsService } from '@/transactions/transactions.service';
 import { User, UserDocument } from '@/users/schemas/user.schema';
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly transactionService: TransactionsService,
   ) {}
 
   async create(createProjectDto: CreateProjectDto, user) {
@@ -98,7 +99,7 @@ export class ProjectsService {
         {
           $set: {
             'shares_holders.$.percentage': (amount / maximum_shares) * 100,
-            'shares_holders.$.last_paymet': new Date() ,
+            'shares_holders.$.last_paymet': new Date(),
           },
         },
         {
@@ -118,7 +119,36 @@ export class ProjectsService {
     currentUser.money -= amount;
     await currentUser.save();
     await projectExists.save();
-    return projectExists;
+    // transaction of buyed ticket
+
+    await this.transactionService.create({
+      type: 'project',
+      user: user._id,
+      ticket: id,
+      quantity:amount,
+      description: `Funding ${amount} retailCC(s)`,
+      status: 'success',
+      total_price:amount,
+       
+    });
+
+    // transaction of provider
+    await this.transactionService.create({
+      type: 'project',
+      user: projectExists.owner._id,
+      ticket: id,
+      quantity:amount,
+      description: `Get ${amount} retailCC(s)`,
+      status: 'success',
+      total_price: amount
+    });
+    return {
+      ...projectExists.toJSON(),
+      // seat_booked: updatedTicket.seat_booked.length,
+      // availableTickets:
+      //   updatedTicket.seat_limit - updatedTicket.seat_booked.length,
+    };
+    //return projectExists;
   }
 
   async findOne(id: string) {

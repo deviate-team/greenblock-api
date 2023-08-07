@@ -40,6 +40,19 @@ export class TicketsController {
     };
   }
 
+  @Get('/list')
+  async findAllWithPagination(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    const tikets = await this.ticketsService.findAllWithPagination(page, limit);
+    return {
+      success: true,
+      message: 'Tickets retrieved successfully',
+      data: tikets,
+    };
+  }
+
   @Post(':id/book')
   @UseGuards(JwtGuard)
   async book(
@@ -52,19 +65,6 @@ export class TicketsController {
       success: true,
       message: 'Ticket booked successfully',
       data: ticket,
-    };
-  }
-
-  @Get('/list')
-  async findAllWithPagination(
-    @Query('page') page: string,
-    @Query('limit') limit: string,
-  ) {
-    const tikets = await this.ticketsService.findAllWithPagination(page, limit);
-    return {
-      success: true,
-      message: 'Tickets retrieved successfully',
-      data: tikets,
     };
   }
 

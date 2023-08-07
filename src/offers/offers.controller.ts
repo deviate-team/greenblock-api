@@ -31,11 +31,15 @@ export class OffersController {
     return this.offersService.create(createOfferDto, user);
   }
 
-  @Post('/buy')
+  @Patch(':id/buy')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.User, Role.Provider, Role.Admin)
-  buyCarbon(@Body() buyCarbonDto: BuyCarbonDto, @GetUser() user) {
-    return this.offersService.buyCarbon(buyCarbonDto, user);
+  buyCarbon(
+  @Param('id') id: string,
+  @Body() buyCarbonDto: BuyCarbonDto,
+  @GetUser() user) 
+  {
+    return this.offersService.buyCarbon(id,buyCarbonDto, user);
   }
 
   @Get()

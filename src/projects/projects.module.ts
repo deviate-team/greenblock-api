@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Project, ProjectSchema } from './schemas/project.schema';
 import { TransactionsModule } from '@/transactions/transactions.module';
 import { User, UserSchema } from '@/users/schemas/user.schema';
+import { UsersModule } from '@/users/users.module';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -12,6 +13,7 @@ import { User, UserSchema } from '@/users/schemas/user.schema';
       { name: User.name, schema: UserSchema },
     ]),
     TransactionsModule,
+    UsersModule,
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService],
