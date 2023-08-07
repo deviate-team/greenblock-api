@@ -12,7 +12,7 @@ import { ProjectsService } from '@/projects/projects.service';
 import { Inject } from '@nestjs/common';
 import { TransactionsService } from '@/transactions/transactions.service';
 import { User, UserDocument } from '@/users/schemas/user.schema';
-
+import { HttpException } from '@nestjs/common';
 @Injectable()
 export class OffersService {
   constructor(
@@ -47,24 +47,57 @@ export class OffersService {
     }
 
     // share money
+    console.log(offer.project_id)
     const project = await this.projectModel.findById(offer.project_id).exec();
+    
+    const owner = await this.userModel.findById(project.owner).exec();
     if(project.shares_holders.length == 0) {
       //No share Holder give all to owener
-      const owner = await this.userModel.findById(project.owner).exec();
       owner.money += buyCarbonDto.amount * offer.price_per_kg;
     }else{
-      let all_money:number  = 50;
+      let all_money:number  = offer.price_per_kg * buyCarbonDto.amount;
       for (const member of project.shares_holders) {
         const user = await this.userModel.findById(member.user).exec();
-        user.money += buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100);
-        all_money -= buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100);
-        
+        let share_amount:number = buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100)
+        user.money += share_amount;
+        all_money -= share_amount;
+        //create per member transaction
+        await this.transactionService.create({
+          type: 'share',
+          user: user._id,
+          ticket: id,
+          quantity:buyCarbonDto.amount,
+          description: `Get share from project ${share_amount} Baht`,
+          status: 'success',
+          total_price:share_amount
+        });
+        user.save();
       }
+      owner.money += all_money;
+      await this.transactionService.create({
+        type: 'share',
+        user: owner._id,
+        ticket: id,
+        quantity:buyCarbonDto.amount,
+        description: `Get share from project ${all_money} Baht`,
+        status: 'success',
+        total_price:all_money
+      });
+      owner.save();
     }
 
     currentUser.carbonCredit += buyCarbonDto.amount;
     currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;
     offer.available -= buyCarbonDto.amount;
+    await this.transactionService.create({
+      type: 'carbon',
+      user: currentUser._id,
+      ticket: id,
+      quantity:buyCarbonDto.amount,
+      description: `Buy CaronCredit ${buyCarbonDto.amount} ton(s)`,
+      status: 'success',
+      total_price: buyCarbonDto.amount * offer.price_per_kg
+    });
     offer.save();
     currentUser.save();
   }
@@ -77,7 +110,24 @@ export class OffersService {
     return `This action updates a #${id} offer`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
+  async remove(id: number) {
+    const offerExits = await this.offerModel
+      .findById(id)
+      .select('-__v')
+      .exec();
+
+    if (!offerExits) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Offer not found',
+        },
+        404,
+      );
+    }
+    await this.offerModel.findByIdAndDelete(id);
   }
+    
+    //return `This action removes a #${id} offer`;
+  
 }
