@@ -172,6 +172,8 @@ export class TicketsService {
       .select('-__v')
       .exec();
 
+    userExists.money -= ticketPrice * quantity;
+    userExists.save();
     // transaction of buyed ticket
     await this.transactionService.create({
       type: 'ticket',
