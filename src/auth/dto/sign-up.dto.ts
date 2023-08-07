@@ -88,4 +88,13 @@ export class SignUpDto {
     message: 'Phone number is required',
   })
   readonly phoneNumber: string;
+
+  @ApiProperty({
+    description: 'User Roles',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly role: string;
+  
 }

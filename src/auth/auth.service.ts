@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-
+import { Role } from '@/common/enums/role.enum';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -65,8 +65,28 @@ export class AuthService {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const { email, username, password, confirmPassword, phoneNumber } =
+    const { email, username, password, confirmPassword, phoneNumber,role } =
       signUpDto;
+    if(role == "admin") {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'You can not register as admin',
+        },
+        400,
+      );
+    }
+    const role_enum = Object.values(Role);
+    if(!role_enum.includes(role as String as unknown as Role)) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Role not found',
+        },
+        400,
+      );
+    }
+
     if (password !== confirmPassword) {
       throw new HttpException(
         {

@@ -56,7 +56,7 @@ export class ProjectsController {
 
     return {
       success: true,
-      message: 'Buy Project successfully',
+      message: 'Join Project successfully',
       data: newProject,
     };
   }
