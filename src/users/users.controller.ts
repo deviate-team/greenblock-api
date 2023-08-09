@@ -33,12 +33,12 @@ export class UsersController {
   @Patch(':id/add-money')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.User, Role.Provider, Role.Admin) //for dev
-  buyCarbon(
+  async addMoney(
   @Param('id') id: string,
   @Body() addMoneyDto: AddMoneyDto,
   @GetUser() user) 
   {
-    const addMoney = this.usersService.addMoney(id,addMoneyDto, user);
+    const addMoney = await this.usersService.addMoney(id,addMoneyDto, user);
     return {
       message: 'success',
       data: addMoney
