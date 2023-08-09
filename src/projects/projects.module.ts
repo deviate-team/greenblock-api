@@ -6,11 +6,13 @@ import { Project, ProjectSchema } from './schemas/project.schema';
 import { TransactionsModule } from '@/transactions/transactions.module';
 import { User, UserSchema } from '@/users/schemas/user.schema';
 import { UsersModule } from '@/users/users.module';
+import { Offer, OfferSchema } from '@/offers/schemas/offer.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Project.name, schema: ProjectSchema },
       { name: User.name, schema: UserSchema },
+      { name: Offer.name, schema: OfferSchema}
     ]),
     TransactionsModule,
     UsersModule,
