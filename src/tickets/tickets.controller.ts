@@ -116,4 +116,15 @@ export class TicketsController {
       data: ticketRemoved,
     };
   }
+
+  @Get(':id/distance')
+  async getDistance(@Param('id') id: string) {
+    const distance = await this.ticketsService.getDistance(id);
+
+    return {
+      success: true,
+      message: 'Distance calculated successfully',
+      distance: distance,
+    };
+  }
 }
