@@ -325,11 +325,11 @@ export class TicketsService {
     ) {
       return 0;
     } else {
-      var radlat1 = (Math.PI * origin_latitude) / 180;
-      var radlat2 = (Math.PI * destination_latitude) / 180;
-      var theta = origin_longitude - destination_longitude;
-      var radtheta = (Math.PI * theta) / 180;
-      var dist =
+      const radlat1 = (Math.PI * origin_latitude) / 180;
+      const radlat2 = (Math.PI * destination_latitude) / 180;
+      const theta = origin_longitude - destination_longitude;
+      const radtheta = (Math.PI * theta) / 180;
+      let dist =
         Math.sin(radlat1) * Math.sin(radlat2) +
         Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
       if (dist > 1) {

@@ -79,7 +79,7 @@ export class ProjectsService {
       'shares_holders.user': user._id,
     });
     if (finduser != undefined) {
-      const findandUpdate = await this.projectModel.findOneAndUpdate(
+      await this.projectModel.findOneAndUpdate(
         {
           _id: id,
           'shares_holders.user': user._id,
@@ -93,7 +93,7 @@ export class ProjectsService {
           new: true,
         },
       );
-      const findandUpdate2 = await this.projectModel.findOneAndUpdate(
+      await this.projectModel.findOneAndUpdate(
         {
           _id: id,
           'shares_holders.user': user._id,
@@ -122,18 +122,36 @@ export class ProjectsService {
     await currentUser.save();
     await projectExists.save();
 
-    // transaction of buyed ticket
     if (projectExists.balance == maximum_shares) {
-      await this.offerModel.create({
-        name: projectExists.name,
-        description: projectExists.description,
-        owner: projectExists.owner._id,
-        project_id: projectExists._id,
-        price_per_kg: 50,
-        image_path: projectExists.image,
-        available: 1000,
-      });
+      for (let i = 0; i < projectExists.shares_holders.length; i++) {
+        const user = await this.userModel
+          .findById(projectExists.shares_holders[i].user)
+          .exec();
+
+        user.retailCC +=
+          projectExists.shares_holders[i].percentage *
+          projectExists.estimated_outcome;
+        await user.save();
+
+        await this.transactionService.create({
+          type: 'project',
+          user: user._id,
+          ticket: id,
+          quantity:
+            projectExists.shares_holders[i].percentage *
+            projectExists.estimated_outcome,
+          description: `Get ${
+            projectExists.shares_holders[i].percentage *
+            projectExists.estimated_outcome
+          } retailCC(s)`,
+          status: 'success',
+          total_price:
+            projectExists.shares_holders[i].percentage *
+            projectExists.estimated_outcome,
+        });
+      }
     }
+
     await this.transactionService.create({
       type: 'project',
       user: user._id,
@@ -156,11 +174,7 @@ export class ProjectsService {
     });
     return {
       ...projectExists.toJSON(),
-      // seat_booked: updatedTicket.seat_booked.length,
-      // availableTickets:
-      //   updatedTicket.seat_limit - updatedTicket.seat_booked.length,
     };
-    //return projectExists;
   }
 
   async findOne(id: string) {
