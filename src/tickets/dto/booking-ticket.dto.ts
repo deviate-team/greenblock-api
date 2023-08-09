@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsEnum, isNotEmpty, isNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TicketOption } from '@/common/enums/ticket-option.enum';
 export class BookingTicketDto {
@@ -9,6 +9,15 @@ export class BookingTicketDto {
   @IsNotEmpty()
   @IsNumber()
   quantity: number;
+
+
+  @ApiProperty({
+    description: 'Donation',
+    example: 20,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  donation: number;
 
   @ApiProperty({
     description: 'Option',
