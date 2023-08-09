@@ -35,10 +35,9 @@ export class UsersController {
   @Roles(Role.User, Role.Provider, Role.Admin) //for dev
   async addMoney(
   @Param('id') id: string,
-  @Body() addMoneyDto: AddMoneyDto,
-  @GetUser() user) 
+  @Body() addMoneyDto: AddMoneyDto) 
   {
-    const addMoney = await this.usersService.addMoney(id,addMoneyDto, user);
+    const addMoney = await this.usersService.addMoney(id,addMoneyDto);
     return {
       message: 'success',
       data: addMoney
