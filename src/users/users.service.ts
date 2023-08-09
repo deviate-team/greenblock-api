@@ -69,7 +69,7 @@ export class UsersService {
     return await this.userModel.find().select('-__v -password').exec();
   }
 
-  async addMoney(id: string, addMoneyDto: AddMoneyDto,user) {
+  async addMoney(id: string, addMoneyDto: AddMoneyDto) {
     const moneyType = addMoneyDto.option;
     const quantity = addMoneyDto.quantity;
     if(quantity < 0){
@@ -82,7 +82,6 @@ export class UsersService {
       );
     }
     const userExists = await this.findOneById(id);
-    console.log(userExists);
     if (!userExists) {
       throw new HttpException(
         {
@@ -103,8 +102,8 @@ export class UsersService {
     }
     
     userExists.save();
-    console.log(userExists);
-    return await userExists;
+    //console.log(userExists);
+    return userExists;
   }
 }
 }
