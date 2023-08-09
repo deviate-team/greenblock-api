@@ -223,6 +223,7 @@ export class TicketsService {
           ? ticketExists.standard_price * quantity
           : ticketExists.business_price * quantity,
     });
+    providerExits.money += ticketPrice * quantity;
     if(donation > 0 ){
       await this.transactionService.create({
         type: 'donate',
