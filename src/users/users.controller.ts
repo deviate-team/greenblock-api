@@ -8,7 +8,8 @@ import { Role } from '@/common/enums/role.enum';
 import { Roles } from '@/common/decorators/roles.decorator';
 
 import { UsersService } from './users.service';
-
+import { Patch, Param, Body } from '@nestjs/common';
+import { AddMoneyDto } from './dto/add-money.dto';
 @ApiTags('Users')
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
@@ -26,6 +27,22 @@ export class UsersController {
       message: 'User profile retrieved successfully',
       data: user,
     };
+  }
+
+
+  @Patch(':id/add-money')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.User, Role.Provider, Role.Admin) //for dev
+  buyCarbon(
+  @Param('id') id: string,
+  @Body() addMoneyDto: AddMoneyDto,
+  @GetUser() user) 
+  {
+    const addMoney = this.usersService.addMoney(id,addMoneyDto, user);
+    return {
+      message: 'success',
+      data: addMoney
+    }
   }
 
   @Get()
