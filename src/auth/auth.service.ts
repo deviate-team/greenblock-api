@@ -77,7 +77,7 @@ export class AuthService {
       );
     }
     const role_enum = Object.values(Role);
-    if (!role_enum.includes(role as String as unknown as Role)) {
+    if (!role_enum.includes(role as string as unknown as Role)) {
       throw new HttpException(
         {
           success: false,

@@ -100,7 +100,7 @@ export class ProjectsService {
         },
         {
           $set: {
-            'shares_holders.$.percentage': (amount / maximum_shares) * 100,
+            'shares_holders.$.percentage': amount / maximum_shares,
             'shares_holders.$.last_paymet': new Date(),
           },
         },
@@ -129,8 +129,9 @@ export class ProjectsService {
           .exec();
 
         user.retailCC +=
-          projectExists.shares_holders[i].percentage *
-          projectExists.estimated_outcome;
+          (projectExists.shares_holders[i].percentage *
+            projectExists.estimated_outcome) /
+          100;
         await user.save();
 
         await this.transactionService.create({
@@ -141,8 +142,9 @@ export class ProjectsService {
             projectExists.shares_holders[i].percentage *
             projectExists.estimated_outcome,
           description: `Get ${
-            projectExists.shares_holders[i].percentage *
-            projectExists.estimated_outcome
+            (projectExists.shares_holders[i].percentage *
+              projectExists.estimated_outcome) /
+            100
           } retailCC(s)`,
           status: 'success',
           total_price:
@@ -180,6 +182,8 @@ export class ProjectsService {
   async findOne(id: string) {
     const projectExists = await this.projectModel
       .findById(id)
+      .populate('owner', '-__v')
+      .populate('shares_holders.user', '-__v')
       .select('-__v')
       .exec();
     if (!projectExists) {
