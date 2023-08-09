@@ -82,6 +82,7 @@ export class UsersService {
       );
     }
     const userExists = await this.findOneById(id);
+    console.log(userExists);
     if (!userExists) {
       throw new HttpException(
         {
@@ -90,7 +91,7 @@ export class UsersService {
         },
         404,
       );
-    }
+    }else{
     if (moneyType === 'carbonCredit') {
       userExists.carbonCredit += quantity;
     }
@@ -100,8 +101,12 @@ export class UsersService {
     if (moneyType === 'retailCC') {
       userExists.retailCC += quantity;
     }
+    
     userExists.save();
-    return userExists;
+    console.log(userExists);
+    return await userExists;
   }
-
 }
+}
+
+
