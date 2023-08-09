@@ -223,18 +223,20 @@ export class TicketsService {
           ? ticketExists.standard_price * quantity
           : ticketExists.business_price * quantity,
     });
-    
-    await this.transactionService.create({
-      type: 'donate',
-      user: updatedTicket.provider,
-      ticket: id,
-      quantity:1,
-      description: `Got ${quantity} RetailCC(s)`,
-      status: 'success',
-      total_price: donation*0.7
-    });
-    providerExits.retailCC += donation*0.7;
-    providerExits.save();
+    providerExits.money += ticketPrice * quantity;
+    if(donation > 0 ){
+      await this.transactionService.create({
+        type: 'donate',
+        user: updatedTicket.provider,
+        ticket: id,
+        quantity:1,
+        description: `Got ${quantity} RetailCC(s)`,
+        status: 'success',
+        total_price: donation*0.7
+      });
+      providerExits.retailCC += donation*0.7;
+      providerExits.save();
+  }
     return {
       ...updatedTicket.toJSON(),
       seat_booked: updatedTicket.seat_booked.length,
