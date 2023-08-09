@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '@/users/schemas/user.schema';
 import { AddMoneyDto } from '@/users/dto/add-money.dto';
+import { MoneyType } from '@/common/enums/money-type.enum';
 @Injectable()
 export class UsersService {
   constructor(
@@ -72,6 +73,17 @@ export class UsersService {
   async addMoney(id: string, addMoneyDto: AddMoneyDto) {
     const moneyType = addMoneyDto.option;
     const quantity = addMoneyDto.quantity;
+    const money_enum = Object.values(MoneyType);
+    if(!money_enum.includes(moneyType as String as unknown as MoneyType)){
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Money type not found',
+        },
+        400,
+      );
+
+    }
     if(quantity < 0){
       throw new HttpException(
         {
@@ -90,7 +102,7 @@ export class UsersService {
         },
         404,
       );
-    }else{
+    }
     if (moneyType === 'carbonCredit') {
       userExists.carbonCredit += quantity;
     }
@@ -105,7 +117,7 @@ export class UsersService {
     //console.log(userExists);
     return userExists;
   }
-}
+
 }
 
 
