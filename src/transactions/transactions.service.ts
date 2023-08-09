@@ -33,7 +33,11 @@ export class TransactionsService {
     const parsedPage = Math.max(Number(page), 1);
     const parsedLimit = Number(limit);
 
-    const count = await this.transactionModel.countDocuments().exec();
+    const count = await this.transactionModel
+      .countDocuments({
+        user: user._id,
+      })
+      .exec();
     const transactions = await this.transactionModel
       .find({
         user: user._id,
