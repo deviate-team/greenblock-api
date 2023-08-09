@@ -7,11 +7,13 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { JoinProjectDto } from './dto/join-project.dto';
 import { TransactionsService } from '@/transactions/transactions.service';
 import { User, UserDocument } from '@/users/schemas/user.schema';
+import { Offer, OfferDocument } from '@/offers/schemas/offer.schema';
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>,
     private readonly transactionService: TransactionsService,
   ) {}
 
@@ -119,8 +121,20 @@ export class ProjectsService {
     currentUser.money -= amount;
     await currentUser.save();
     await projectExists.save();
+    
     // transaction of buyed ticket
+    if(projectExists.balance == maximum_shares){
+      await this.offerModel.create({
+        name: projectExists.name,
+        description: projectExists.description,
+        owner: projectExists.owner._id,
+        project_id: projectExists._id,
+        price_per_kg: 50,
+        image_path: projectExists.image,
+        available: 1000,
 
+      });
+    }
     await this.transactionService.create({
       type: 'project',
       user: user._id,

@@ -100,6 +100,7 @@ export class OffersService {
     });
     offer.save();
     currentUser.save();
+    return offer;
   }
 
   async findOne(id: string) {
