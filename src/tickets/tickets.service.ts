@@ -19,6 +19,7 @@ export class TicketsService {
   ) {}
 
   async create(createTicketDto: CreateTicketDto, user) {
+    console.log(user._id);
     await this.ticketModel.create({
       ...createTicketDto,
       provider: user._id,
@@ -102,9 +103,14 @@ export class TicketsService {
     };
   }
 
+
+
+
   async book(id: string, bookingDto: BookingTicketDto, user) {
     const ticketExists = await this.ticketModel.findById(id).exec();
-    const { quantity, option } = bookingDto;
+    
+    
+    const { quantity, option,donation } = bookingDto;
 
     if (!ticketExists) {
       throw new HttpException(
@@ -125,8 +131,26 @@ export class TicketsService {
         400,
       );
     }
-
+    const providerExits = await this.userModel.findById(ticketExists.provider).exec();
     const userExists = await this.userModel.findById(user._id).exec();
+    if (!userExists) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'User not found',
+        },
+        404,
+      );
+    }
+    if(!providerExits){
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Provider not found',
+        },
+        404,
+      );
+    }
     const ticketPrice =
       option === 'standard'
         ? ticketExists.standard_price
@@ -183,7 +207,7 @@ export class TicketsService {
       description: `Booked ${quantity} ticket(s)`,
       status: 'success',
       total_price:
-        option === 'standard' ? ticketPrice * quantity : ticketPrice * quantity,
+        option === 'standard' ? (ticketPrice * quantity)+donation : (ticketPrice * quantity)+donation,
     });
 
     // transaction of provider
@@ -199,7 +223,18 @@ export class TicketsService {
           ? ticketExists.standard_price * quantity
           : ticketExists.business_price * quantity,
     });
-
+    
+    await this.transactionService.create({
+      type: 'donate',
+      user: updatedTicket.provider,
+      ticket: id,
+      quantity:1,
+      description: `Got ${quantity} RetailCC(s)`,
+      status: 'success',
+      total_price: donation*0.7
+    });
+    providerExits.retailCC += donation*0.7;
+    providerExits.save();
     return {
       ...updatedTicket.toJSON(),
       seat_booked: updatedTicket.seat_booked.length,
