@@ -16,7 +16,7 @@ import { HttpException } from '@nestjs/common';
 @Injectable()
 export class OffersService {
   constructor(
-    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>, 
+    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     private readonly transactionService: TransactionsService,
@@ -33,7 +33,7 @@ export class OffersService {
     return await this.offerModel.find({});
   }
 
-  async buyCarbon(id:string,buyCarbonDto: BuyCarbonDto, user) {
+  async buyCarbon(id: string, buyCarbonDto: BuyCarbonDto, user) {
     const offer = await this.offerModel.findById(id);
     if (offer.available < buyCarbonDto.amount) {
       throw new Error('Not enough carbon available');
@@ -42,23 +42,25 @@ export class OffersService {
     if (currentUser.money < buyCarbonDto.amount * offer.price_per_kg) {
       throw new Error('Not enough money');
     }
-    if(buyCarbonDto.amount > offer.available) {
+    if (buyCarbonDto.amount > offer.available) {
       throw new Error('Not enough carbon credit');
     }
 
     // share money
-    console.log(offer.project_id)
+    console.log(offer.project_id);
     const project = await this.projectModel.findById(offer.project_id).exec();
-    
+
     const owner = await this.userModel.findById(project.owner).exec();
-    if(project.shares_holders.length == 0) {
+    if (project.shares_holders.length == 0) {
       //No share Holder give all to owener
       owner.money += buyCarbonDto.amount * offer.price_per_kg;
-    }else{
-      let all_money:number  = offer.price_per_kg * buyCarbonDto.amount;
+    } else {
+      let all_money: number = offer.price_per_kg * buyCarbonDto.amount;
       for (const member of project.shares_holders) {
         const user = await this.userModel.findById(member.user).exec();
-        let share_amount:number = buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100)
+        let share_amount: number =
+          buyCarbonDto.amount *
+          ((offer.price_per_kg * member.percentage) / 100);
         user.money += share_amount;
         all_money -= share_amount;
         //create per member transaction
@@ -66,10 +68,10 @@ export class OffersService {
           type: 'share',
           user: user._id,
           ticket: id,
-          quantity:buyCarbonDto.amount,
+          quantity: buyCarbonDto.amount,
           description: `Get share from project ${share_amount} Baht`,
           status: 'success',
-          total_price:share_amount
+          total_price: share_amount,
         });
         user.save();
       }
@@ -78,10 +80,10 @@ export class OffersService {
         type: 'share',
         user: owner._id,
         ticket: id,
-        quantity:buyCarbonDto.amount,
+        quantity: buyCarbonDto.amount,
         description: `Get share from project ${all_money} Baht`,
         status: 'success',
-        total_price:all_money
+        total_price: all_money,
       });
       owner.save();
     }
@@ -93,10 +95,10 @@ export class OffersService {
       type: 'carbon',
       user: currentUser._id,
       ticket: id,
-      quantity:buyCarbonDto.amount,
+      quantity: buyCarbonDto.amount,
       description: `Buy CaronCredit ${buyCarbonDto.amount} ton(s)`,
       status: 'success',
-      total_price: buyCarbonDto.amount * offer.price_per_kg
+      total_price: buyCarbonDto.amount * offer.price_per_kg,
     });
     offer.save();
     currentUser.save();
@@ -112,10 +114,7 @@ export class OffersService {
   }
 
   async remove(id: number) {
-    const offerExits = await this.offerModel
-      .findById(id)
-      .select('-__v')
-      .exec();
+    const offerExits = await this.offerModel.findById(id).select('-__v').exec();
 
     if (!offerExits) {
       throw new HttpException(
@@ -128,7 +127,6 @@ export class OffersService {
     }
     await this.offerModel.findByIdAndDelete(id);
   }
-    
-    //return `This action removes a #${id} offer`;
-  
+
+  //return `This action removes a #${id} offer`;
 }

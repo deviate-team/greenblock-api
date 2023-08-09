@@ -2,6 +2,6 @@ export enum TransactionType {
   Ticket = 'ticket',
   Project = 'project',
   Offer = 'share',
-  Carbon = "carbon",
-  Donate = "donate"
+  Carbon = 'carbon',
+  Donate = 'donate',
 }

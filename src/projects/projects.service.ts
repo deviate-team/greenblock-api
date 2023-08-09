@@ -121,9 +121,9 @@ export class ProjectsService {
     currentUser.money -= amount;
     await currentUser.save();
     await projectExists.save();
-    
+
     // transaction of buyed ticket
-    if(projectExists.balance == maximum_shares){
+    if (projectExists.balance == maximum_shares) {
       await this.offerModel.create({
         name: projectExists.name,
         description: projectExists.description,
@@ -132,18 +132,16 @@ export class ProjectsService {
         price_per_kg: 50,
         image_path: projectExists.image,
         available: 1000,
-
       });
     }
     await this.transactionService.create({
       type: 'project',
       user: user._id,
       ticket: id,
-      quantity:amount,
+      quantity: amount,
       description: `Funding ${amount} retailCC(s)`,
       status: 'success',
-      total_price:amount,
-       
+      total_price: amount,
     });
 
     // transaction of provider
@@ -151,10 +149,10 @@ export class ProjectsService {
       type: 'project',
       user: projectExists.owner._id,
       ticket: id,
-      quantity:amount,
+      quantity: amount,
       description: `Get ${amount} retailCC(s)`,
       status: 'success',
-      total_price: amount
+      total_price: amount,
     });
     return {
       ...projectExists.toJSON(),

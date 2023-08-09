@@ -74,7 +74,7 @@ export class UsersService {
     const moneyType = addMoneyDto.option;
     const quantity = addMoneyDto.quantity;
     const money_enum = Object.values(MoneyType);
-    if(!money_enum.includes(moneyType as String as unknown as MoneyType)){
+    if (!money_enum.includes(moneyType as String as unknown as MoneyType)) {
       throw new HttpException(
         {
           success: false,
@@ -82,9 +82,8 @@ export class UsersService {
         },
         400,
       );
-
     }
-    if(quantity < 0){
+    if (quantity < 0) {
       throw new HttpException(
         {
           success: false,
@@ -112,12 +111,9 @@ export class UsersService {
     if (moneyType === 'retailCC') {
       userExists.retailCC += quantity;
     }
-    
+
     userExists.save();
     //console.log(userExists);
     return userExists;
   }
-
 }
-
-

@@ -65,9 +65,9 @@ export class AuthService {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const { email, username, password, confirmPassword, phoneNumber,role } =
+    const { email, username, password, confirmPassword, phoneNumber, role } =
       signUpDto;
-    if(role == "admin") {
+    if (role == 'admin') {
       throw new HttpException(
         {
           success: false,
@@ -77,7 +77,7 @@ export class AuthService {
       );
     }
     const role_enum = Object.values(Role);
-    if(!role_enum.includes(role as String as unknown as Role)) {
+    if (!role_enum.includes(role as String as unknown as Role)) {
       throw new HttpException(
         {
           success: false,

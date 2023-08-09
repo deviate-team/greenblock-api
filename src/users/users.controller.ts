@@ -29,19 +29,15 @@ export class UsersController {
     };
   }
 
-
   @Patch(':id/add-money')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.User, Role.Provider, Role.Admin) //for dev
-  async addMoney(
-  @Param('id') id: string,
-  @Body() addMoneyDto: AddMoneyDto) 
-  {
-    const addMoney = await this.usersService.addMoney(id,addMoneyDto);
+  async addMoney(@Param('id') id: string, @Body() addMoneyDto: AddMoneyDto) {
+    const addMoney = await this.usersService.addMoney(id, addMoneyDto);
     return {
       message: 'success',
-      data: addMoney
-    }
+      data: addMoney,
+    };
   }
 
   @Get()
