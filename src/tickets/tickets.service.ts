@@ -265,4 +265,41 @@ export class TicketsService {
     }
     await this.ticketModel.findByIdAndDelete(id);
   }
+
+  async getDistance(id: string) {
+    const ticketExists = await this.ticketModel.findById(id).exec();
+    if(!ticketExists){
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Ticket not found',
+        },
+        404,
+      );
+    }
+    const origin_latitude = ticketExists.depart_location.latitude;
+    const origin_longitude = ticketExists.depart_location.longitude;
+
+    const destination_latitude = ticketExists.arrive_location.latitude;
+    const destination_longitude = ticketExists.arrive_location.longitude;
+    if ((origin_latitude == destination_latitude) && (origin_longitude == destination_longitude)) {
+      return 0;
+    }
+    else {
+        var radlat1 = Math.PI * origin_latitude/180;
+        var radlat2 = Math.PI * destination_latitude/180;
+        var theta = origin_longitude-destination_longitude;
+        var radtheta = Math.PI * theta/180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;
+        const unit = "K";
+        if (unit=="K") { dist = dist * 1.609344 }
+        return dist;
+    }
+  }
 }
