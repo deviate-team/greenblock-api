@@ -86,22 +86,22 @@ export class OffersService {
     //   owner.save();
     // }
 
-    // currentUser.carbonCredit += buyCarbonDto.amount;
-    // currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;
-    // offer.available -= buyCarbonDto.amount;
-    // // await this.transactionService.create({
-    // //   type: 'carbon',
-    // //   user: currentUser._id,
-    // //   ticket: id,
-    // //   quantity: buyCarbonDto.amount,
-    // //   description: `Buy CaronCredit ${buyCarbonDto.amount} ton(s)`,
-    // //   status: 'success',
-    // //   total_price: buyCarbonDto.amount * offer.price_per_kg,
-    // // });
-    // offer.save();
-    // currentUser.save();
-    // return offer;
-    return null;
+    currentUser.carbonCredit += buyCarbonDto.amount;
+    currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;
+    offer.available -= buyCarbonDto.amount;
+    await this.transactionService.create({
+      type: 'carbon',
+      user: currentUser._id,
+      ticket: id,
+      quantity: buyCarbonDto.amount,
+      description: `Buy CaronCredit ${buyCarbonDto.amount} ton(s)`,
+      status: 'success',
+      total_price: buyCarbonDto.amount * offer.price_per_kg,
+    });
+    offer.save();
+    currentUser.save();
+    return offer;
+    //return null;
   }
 
   async findOne(id: string) {
