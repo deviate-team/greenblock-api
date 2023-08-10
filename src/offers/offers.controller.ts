@@ -42,9 +42,8 @@ export class OffersController {
     const buyCaron = await this.offersService.buyCarbon(id,buyCarbonDto, user);
     return {
       message: 'success',
-      data: buyCaron
-    }
-    //return this.offersService.buyCarbon(id,buyCarbonDto, user);
+      data: buyCaron,
+    };
   }
 
   @Get()

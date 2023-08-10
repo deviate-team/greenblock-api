@@ -103,14 +103,10 @@ export class TicketsService {
     };
   }
 
-
-
-
   async book(id: string, bookingDto: BookingTicketDto, user) {
     const ticketExists = await this.ticketModel.findById(id).exec();
-    
-    
-    const { quantity, option,donation } = bookingDto;
+
+    const { quantity, option, donation } = bookingDto;
 
     if (!ticketExists) {
       throw new HttpException(
@@ -131,7 +127,9 @@ export class TicketsService {
         400,
       );
     }
-    const providerExits = await this.userModel.findById(ticketExists.provider).exec();
+    const providerExits = await this.userModel
+      .findById(ticketExists.provider)
+      .exec();
     const userExists = await this.userModel.findById(user._id).exec();
     if (!userExists) {
       throw new HttpException(
@@ -142,7 +140,7 @@ export class TicketsService {
         404,
       );
     }
-    if(!providerExits){
+    if (!providerExits) {
       throw new HttpException(
         {
           success: false,
@@ -207,7 +205,9 @@ export class TicketsService {
       description: `Booked ${quantity} ticket(s)`,
       status: 'success',
       total_price:
-        option === 'standard' ? (ticketPrice * quantity)+donation : (ticketPrice * quantity)+donation,
+        option === 'standard'
+          ? ticketPrice * quantity + donation
+          : ticketPrice * quantity + donation,
     });
 
     // transaction of provider
@@ -224,19 +224,19 @@ export class TicketsService {
           : ticketExists.business_price * quantity,
     });
     providerExits.money += ticketPrice * quantity;
-    if(donation > 0 ){
+    if (donation > 0) {
       await this.transactionService.create({
         type: 'donate',
         user: updatedTicket.provider,
         ticket: id,
-        quantity:1,
+        quantity: 1,
         description: `Got ${quantity} RetailCC(s)`,
         status: 'success',
-        total_price: donation*0.7
+        total_price: donation * 0.7,
       });
-      providerExits.retailCC += donation*0.7;
+      providerExits.retailCC += donation * 0.7;
       providerExits.save();
-  }
+    }
     return {
       ...updatedTicket.toJSON(),
       seat_booked: updatedTicket.seat_booked.length,
@@ -305,7 +305,7 @@ export class TicketsService {
 
   async getDistance(id: string) {
     const ticketExists = await this.ticketModel.findById(id).exec();
-    if(!ticketExists){
+    if (!ticketExists) {
       throw new HttpException(
         {
           success: false,
@@ -319,24 +319,30 @@ export class TicketsService {
 
     const destination_latitude = ticketExists.arrive_location.latitude;
     const destination_longitude = ticketExists.arrive_location.longitude;
-    if ((origin_latitude == destination_latitude) && (origin_longitude == destination_longitude)) {
+    if (
+      origin_latitude == destination_latitude &&
+      origin_longitude == destination_longitude
+    ) {
       return 0;
-    }
-    else {
-        var radlat1 = Math.PI * origin_latitude/180;
-        var radlat2 = Math.PI * destination_latitude/180;
-        var theta = origin_longitude-destination_longitude;
-        var radtheta = Math.PI * theta/180;
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        if (dist > 1) {
-            dist = 1;
-        }
-        dist = Math.acos(dist);
-        dist = dist * 180/Math.PI;
-        dist = dist * 60 * 1.1515;
-        const unit = "K";
-        if (unit=="K") { dist = dist * 1.609344 }
-        return dist;
+    } else {
+      const radlat1 = (Math.PI * origin_latitude) / 180;
+      const radlat2 = (Math.PI * destination_latitude) / 180;
+      const theta = origin_longitude - destination_longitude;
+      const radtheta = (Math.PI * theta) / 180;
+      let dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+        dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = (dist * 180) / Math.PI;
+      dist = dist * 60 * 1.1515;
+      const unit = 'K';
+      if (unit == 'K') {
+        dist = dist * 1.609344;
+      }
+      return dist;
     }
   }
 }

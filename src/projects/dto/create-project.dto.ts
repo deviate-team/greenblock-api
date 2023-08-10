@@ -31,7 +31,7 @@ export class CreateProjectDto {
   })
   @IsObject()
   @IsNotEmpty()
-  contract: {
+  contact: {
     name: string;
     email: string;
     phoneNumber: string;
@@ -60,6 +60,14 @@ export class CreateProjectDto {
   @IsString()
   @IsNotEmpty()
   image: string;
+
+  @ApiProperty({
+    description: 'Estimated project outcome of retailCC',
+    example: 100,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  estimated_outcome: number;
 
   @ApiProperty({
     description: 'Project max shares',

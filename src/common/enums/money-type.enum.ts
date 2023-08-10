@@ -1,6 +1,5 @@
 export enum MoneyType {
-    money = 'money',
-    retailCC = 'retailCC',
-    carbonCredit = 'carbonCredit',
-  }
-  
+  money = 'money',
+  retailCC = 'retailCC',
+  carbonCredit = 'carbonCredit',
+}

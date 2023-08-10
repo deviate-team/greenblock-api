@@ -8,8 +8,6 @@ import { Model } from 'mongoose';
 import { Offer } from './schemas/offer.schema';
 import { BuyCarbonDto } from './dto/buy-carbon.dto';
 import { Project, ProjectDocument } from '@/projects/schemas/project.schema';
-import { ProjectsService } from '@/projects/projects.service';
-import { Inject } from '@nestjs/common';
 import { TransactionsService } from '@/transactions/transactions.service';
 import { User, UserDocument } from '@/users/schemas/user.schema';
 import { HttpException } from '@nestjs/common';
@@ -17,7 +15,7 @@ import { UsersService } from '@/users/users.service';
 @Injectable()
 export class OffersService {
   constructor(
-    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>, 
+    @InjectModel(Offer.name) private offerModel: Model<OfferDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     private readonly transactionService: TransactionsService,
@@ -88,21 +86,22 @@ export class OffersService {
     //   owner.save();
     // }
 
-    currentUser.carbonCredit += buyCarbonDto.amount;
-    currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;
-    offer.available -= buyCarbonDto.amount;
-    await this.transactionService.create({
-      type: 'carbon',
-      user: currentUser._id,
-      ticket: id,
-      quantity:buyCarbonDto.amount,
-      description: `Buy CaronCredit ${buyCarbonDto.amount} ton(s)`,
-      status: 'success',
-      total_price: buyCarbonDto.amount * offer.price_per_kg
-    });
-    offer.save();
-    currentUser.save();
-    return offer;
+    // currentUser.carbonCredit += buyCarbonDto.amount;
+    // currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;
+    // offer.available -= buyCarbonDto.amount;
+    // // await this.transactionService.create({
+    // //   type: 'carbon',
+    // //   user: currentUser._id,
+    // //   ticket: id,
+    // //   quantity: buyCarbonDto.amount,
+    // //   description: `Buy CaronCredit ${buyCarbonDto.amount} ton(s)`,
+    // //   status: 'success',
+    // //   total_price: buyCarbonDto.amount * offer.price_per_kg,
+    // // });
+    // offer.save();
+    // currentUser.save();
+    // return offer;
+    return null;
   }
 
   async findOne(id: string) {
@@ -114,10 +113,7 @@ export class OffersService {
   }
 
   async remove(id: number) {
-    const offerExits = await this.offerModel
-      .findById(id)
-      .select('-__v')
-      .exec();
+    const offerExits = await this.offerModel.findById(id).select('-__v').exec();
 
     if (!offerExits) {
       throw new HttpException(
@@ -130,7 +126,6 @@ export class OffersService {
     }
     await this.offerModel.findByIdAndDelete(id);
   }
-    
-    //return `This action removes a #${id} offer`;
-  
+
+  //return `This action removes a #${id} offer`;
 }

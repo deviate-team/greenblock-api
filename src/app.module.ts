@@ -34,7 +34,6 @@ import { TransactionsModule } from './transactions/transactions.module';
     AuthModule,
     TransactionsModule,
     TicketsModule,
-    
   ],
   controllers: [AppController],
   providers: [AppService],

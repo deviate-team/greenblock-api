@@ -13,9 +13,8 @@ import { TransactionsModule } from '@/transactions/transactions.module';
     MongooseModule.forFeature([
       { name: Offer.name, schema: OfferSchema },
       { name: Project.name, schema: ProjectSchema },
-      { name: User.name, schema: UserSchema }
-    ])
-    ,
+      { name: User.name, schema: UserSchema },
+    ]),
     TransactionsModule,
     UsersModule,
     ProjectsModule,
