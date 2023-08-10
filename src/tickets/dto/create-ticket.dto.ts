@@ -87,7 +87,4 @@ export class CreateTicketDto {
   @IsNotEmpty()
   @IsNumber()
   seat_limit: number;
-
-
-  
 }

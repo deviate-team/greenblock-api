@@ -12,72 +12,88 @@ export class TransactionsService {
   ) {}
 
   async create(createTransactionDto: CreateTransactionDTO) {
-    await this.transactionModel.create(createTransactionDto);
+    try {
+      await this.transactionModel.create(createTransactionDto);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findAll() {
-    const transactions = await this.transactionModel
-      .find()
-      .populate(
-        'user',
-        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
-      )
-      .select('-__v')
-      .sort({ createdAt: -1 })
-      .exec();
+    try {
+      const transactions = await this.transactionModel
+        .find()
+        .populate(
+          'user',
+          '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+        )
+        .select('-__v')
+        .sort({ createdAt: -1 })
+        .exec();
 
-    return transactions;
+      return transactions;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findAllWithPagination(page = '1', limit = '10', user) {
-    const parsedPage = Math.max(Number(page), 1);
-    const parsedLimit = Number(limit);
+    try {
+      const parsedPage = Math.max(Number(page), 1);
+      const parsedLimit = Number(limit);
 
-    const count = await this.transactionModel
-      .countDocuments({
-        user: user._id,
-      })
-      .exec();
-    const transactions = await this.transactionModel
-      .find({
-        user: user._id,
-      })
-      .limit(parsedLimit)
-      .skip((parsedPage - 1) * parsedLimit)
-      .populate(
-        'user',
-        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
-      )
-      .populate(
-        'ticket',
-        '-__v -createdAt -updatedAt -seat_booked -seat_limit -provider',
-      )
-      .select('-__v')
-      .sort({ createdAt: -1 })
-      .exec();
+      const count = await this.transactionModel
+        .countDocuments({
+          user: user._id,
+        })
+        .exec();
+      const transactions = await this.transactionModel
+        .find({
+          user: user._id,
+        })
+        .limit(parsedLimit)
+        .skip((parsedPage - 1) * parsedLimit)
+        .populate(
+          'user',
+          '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+        )
+        .populate(
+          'ticket',
+          '-__v -createdAt -updatedAt -seat_booked -seat_limit -provider',
+        )
+        .select('-__v')
+        .sort({ createdAt: -1 })
+        .exec();
 
-    return {
-      totalTransactions: count,
-      currentPage: parsedPage,
-      totalPages: Math.ceil(count / parsedLimit),
-      transactions,
-    };
+      return {
+        totalTransactions: count,
+        currentPage: parsedPage,
+        totalPages: Math.ceil(count / parsedLimit),
+        transactions,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findOne(id: string) {
-    const transaction = await this.transactionModel
-      .findById(id)
-      .populate(
-        'user',
-        '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
-      )
-      .populate(
-        'ticket',
-        '-__v -createdAt -updatedAt -seat_booked -seat_limit -provider',
-      )
-      .select('-__v')
-      .exec();
+    try {
+      const transaction = await this.transactionModel
+        .findById(id)
+        .populate(
+          'user',
+          '-__v -password -createdAt -updatedAt -role -birthDate -firstName -lastName',
+        )
+        .populate(
+          'ticket',
+          '-__v -createdAt -updatedAt -seat_booked -seat_limit -provider',
+        )
+        .select('-__v')
+        .exec();
 
-    return transaction;
+      return transaction;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

@@ -24,7 +24,7 @@ export class Project extends Document {
   owner: User;
 
   @Prop({ required: true, type: Object })
-  contract: {
+  contact: {
     name: string;
     email: string;
     phoneNumber: string;
@@ -44,6 +44,9 @@ export class Project extends Document {
 
   @Prop({ default: 0 })
   balance: number;
+
+  @Prop({ default: 0 })
+  estimated_outcome: number;
 
   @Prop({ default: [] })
   shares_holders: ProjectMember[];

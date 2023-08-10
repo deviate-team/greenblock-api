@@ -74,7 +74,6 @@ export class ProjectsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const project = await this.projectsService.findOne(id);
-    console.log(project);
     if (project == undefined) {
       throw new Error('project not found');
     } else {

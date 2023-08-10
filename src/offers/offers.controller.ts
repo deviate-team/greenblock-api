@@ -35,15 +35,15 @@ export class OffersController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.User, Role.Provider, Role.Admin)
   buyCarbon(
-  @Param('id') id: string,
-  @Body() buyCarbonDto: BuyCarbonDto,
-  @GetUser() user) 
-  {
-    const buyCaron = this.offersService.buyCarbon(id,buyCarbonDto, user);
+    @Param('id') id: string,
+    @Body() buyCarbonDto: BuyCarbonDto,
+    @GetUser() user,
+  ) {
+    const buyCaron = this.offersService.buyCarbon(id, buyCarbonDto, user);
     return {
       message: 'success',
-      data: buyCaron
-    }
+      data: buyCaron,
+    };
     //return this.offersService.buyCarbon(id,buyCarbonDto, user);
   }
 
