@@ -44,7 +44,6 @@ export class OffersController {
       message: 'success',
       data: buyCaron,
     };
-    //return this.offersService.buyCarbon(id,buyCarbonDto, user);
   }
 
   @Get()
