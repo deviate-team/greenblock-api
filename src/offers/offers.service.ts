@@ -13,6 +13,7 @@ import { Inject } from '@nestjs/common';
 import { TransactionsService } from '@/transactions/transactions.service';
 import { User, UserDocument } from '@/users/schemas/user.schema';
 import { HttpException } from '@nestjs/common';
+import { UsersService } from '@/users/users.service';
 @Injectable()
 export class OffersService {
   constructor(
@@ -20,6 +21,7 @@ export class OffersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     private readonly transactionService: TransactionsService,
+    //private readonly userService: UsersService,
   ) {}
 
   async create(createOfferDto: CreateOfferDto, user) {
@@ -35,6 +37,7 @@ export class OffersService {
 
   async buyCarbon(id:string,buyCarbonDto: BuyCarbonDto, user) {
     const offer = await this.offerModel.findById(id);
+
     if (offer.available < buyCarbonDto.amount) {
       throw new Error('Not enough carbon available');
     }
@@ -47,44 +50,43 @@ export class OffersService {
     }
 
     // share money
-    console.log(offer.project_id)
-    const project = await this.projectModel.findById(offer.project_id).exec();
+    // const project = await this.projectModel.findById(offer.project_id).exec();
     
-    const owner = await this.userModel.findById(project.owner).exec();
-    if(project.shares_holders.length == 0) {
-      //No share Holder give all to owener
-      owner.money += buyCarbonDto.amount * offer.price_per_kg;
-    }else{
-      let all_money:number  = offer.price_per_kg * buyCarbonDto.amount;
-      for (const member of project.shares_holders) {
-        const user = await this.userModel.findById(member.user).exec();
-        let share_amount:number = buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100)
-        user.money += share_amount;
-        all_money -= share_amount;
-        //create per member transaction
-        await this.transactionService.create({
-          type: 'share',
-          user: user._id,
-          ticket: id,
-          quantity:buyCarbonDto.amount,
-          description: `Get share from project ${share_amount} Baht`,
-          status: 'success',
-          total_price:share_amount
-        });
-        user.save();
-      }
-      owner.money += all_money;
-      await this.transactionService.create({
-        type: 'share',
-        user: owner._id,
-        ticket: id,
-        quantity:buyCarbonDto.amount,
-        description: `Get share from project ${all_money} Baht`,
-        status: 'success',
-        total_price:all_money
-      });
-      owner.save();
-    }
+    // const owner = await this.userModel.findById(project.owner).exec();
+    // if(project.shares_holders.length == 0) {
+    //   //No share Holder give all to owener
+    //   owner.money += buyCarbonDto.amount * offer.price_per_kg;
+    // }else{
+    //   let all_money:number  = offer.price_per_kg * buyCarbonDto.amount;
+    //   for (const member of project.shares_holders) {
+    //     const user = await this.userModel.findById(member.user).exec();
+    //     let share_amount:number = buyCarbonDto.amount * (offer.price_per_kg * member.percentage / 100)
+    //     user.money += share_amount;
+    //     all_money -= share_amount;
+    //     //create per member transaction
+    //     await this.transactionService.create({
+    //       type: 'share',
+    //       user: user._id,
+    //       ticket: id,
+    //       quantity:buyCarbonDto.amount,
+    //       description: `Get share from project ${share_amount} Baht`,
+    //       status: 'success',
+    //       total_price:share_amount
+    //     });
+    //     user.save();
+    //   }
+    //   owner.money += all_money;
+    //   await this.transactionService.create({
+    //     type: 'share',
+    //     user: owner._id,
+    //     ticket: id,
+    //     quantity:buyCarbonDto.amount,
+    //     description: `Get share from project ${all_money} Baht`,
+    //     status: 'success',
+    //     total_price:all_money
+    //   });
+    //   owner.save();
+    // }
 
     currentUser.carbonCredit += buyCarbonDto.amount;
     currentUser.money -= buyCarbonDto.amount * offer.price_per_kg;

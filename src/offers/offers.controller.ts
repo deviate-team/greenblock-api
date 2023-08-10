@@ -34,12 +34,12 @@ export class OffersController {
   @Patch(':id/buy')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(Role.User, Role.Provider, Role.Admin)
-  buyCarbon(
+  async buyCarbon(
   @Param('id') id: string,
   @Body() buyCarbonDto: BuyCarbonDto,
   @GetUser() user) 
   {
-    const buyCaron = this.offersService.buyCarbon(id,buyCarbonDto, user);
+    const buyCaron = await this.offersService.buyCarbon(id,buyCarbonDto, user);
     return {
       message: 'success',
       data: buyCaron
