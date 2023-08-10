@@ -139,46 +139,46 @@ export class ProjectsService {
             100;
           await user.save();
 
-          await this.transactionService.create({
-            type: 'project',
-            user: user._id,
-            ticket: id,
-            quantity:
-              projectExists.shares_holders[i].percentage *
-              projectExists.estimated_outcome,
-            description: `Get ${
-              (projectExists.shares_holders[i].percentage *
-                projectExists.estimated_outcome) /
-              100
-            } retailCC(s)`,
-            status: 'success',
-            total_price:
-              projectExists.shares_holders[i].percentage *
-              projectExists.estimated_outcome,
-          });
+          // await this.transactionService.create({
+          //   type: 'project',
+          //   user: user._id,
+          //   ticket: null,
+          //   quantity:
+          //     projectExists.shares_holders[i].percentage *
+          //     projectExists.estimated_outcome,
+          //   description: `Get ${
+          //     (projectExists.shares_holders[i].percentage *
+          //       projectExists.estimated_outcome) /
+          //     100
+          //   } retailCC(s)`,
+          //   status: 'success',
+          //   total_price:
+          //     projectExists.shares_holders[i].percentage *
+          //     projectExists.estimated_outcome,
+          // });
         }
       }
 
-      await this.transactionService.create({
-        type: 'project',
-        user: user._id,
-        ticket: id,
-        quantity: amount,
-        description: `Funding ${amount} retailCC(s)`,
-        status: 'success',
-        total_price: amount,
-      });
+      // await this.transactionService.create({
+      //   type: 'project',
+      //   user: user._id,
+      //   ticket: null,
+      //   quantity: amount,
+      //   description: `Funding ${amount} retailCC(s)`,
+      //   status: 'success',
+      //   total_price: amount,
+      // });
 
-      // transaction of provider
-      await this.transactionService.create({
-        type: 'project',
-        user: projectExists.owner._id,
-        ticket: id,
-        quantity: amount,
-        description: `Get ${amount} retailCC(s)`,
-        status: 'success',
-        total_price: amount,
-      });
+      // // transaction of provider
+      // await this.transactionService.create({
+      //   type: 'project',
+      //   user: projectExists.owner._id,
+      //   ticket: null,
+      //   quantity: amount,
+      //   description: `Get ${amount} retailCC(s)`,
+      //   status: 'success',
+      //   total_price: amount,
+      // });
       return {
         ...projectExists.toJSON(),
       };
